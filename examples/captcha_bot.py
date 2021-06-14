@@ -5,9 +5,16 @@ from threading import Thread, Timer
 import telebot
 from telebot import types
 
+#Import the CaptchaManager
 from pyTelegramBotCAPTCHA import Captcha, CaptchaManager
 
 bot = telebot.TeleBot("token")
+
+#Initialize the CaptchaManager
+#   `default_language`: str = The language to use if not defined in 
+#       `captcha_manager.send_random_captcha(...)`
+#   `default_timeout`: float = The timeout (in seconds) to use if not defined in
+#       `captcha_manager.send_random_captcha(...)`
 captcha_manager = CaptchaManager(default_language="en", default_timeout=90)
 
 
@@ -18,7 +25,6 @@ def try_delete_message(chat_id, message_id):
 def send_temp_message(chat_id, text, parse_mode=None, display_time=15):
     m = bot.send_message(chat_id, text, parse_mode=parse_mode)
     Timer(interval=display_time, function=try_delete_message, args=[m.chat.id, m.message_id])
-
 
 @captcha_manager.on_captcha_correct
 def on_captcha_correct(captcha: Captcha):

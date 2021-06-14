@@ -1,4 +1,4 @@
-from pyTelegramBotCAPTCHA import CaptchaManager, Captcha
+from .telebot_captcha import CaptchaManager, Captcha
 
 
 __author__ = "SwissCorePy"
