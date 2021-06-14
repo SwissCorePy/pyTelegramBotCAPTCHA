@@ -1,3 +1,4 @@
 
 *.txt
 pyTelegramBotCAPTCHA.egg-info/PKG-INFO
+.DS_Store
