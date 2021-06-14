@@ -50,5 +50,5 @@ def on_timeout(captcha):
 ```
 
 I will update and complete the README file soon ;) 
-For more information take a look at the captcha_bot.py in the 'examples' folder
+For an working example, take a look at the `captcha_bot.py` file in the 'examples' folder
   
