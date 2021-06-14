@@ -7,7 +7,8 @@ setup(
     description='An easy to use an (hopefully useful) captcha solution for pyTelegramBotAPI.',
     author='SwissCorePy',
     author_email='swisscore.py@gmail.com',
-
+    
+    package_dir={'': '/Volumes/Macintosh SSD/Users/fredi/Documents/GitHub/'},
     url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA',
     download_url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA/archive/refs/heads/main.zip',
 
@@ -20,7 +21,7 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Telegram Bot Developers',
         'Environment :: Console',
-        'License :: OSI Approved :: GNU General Public License v3.0',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3'
     ],
 )

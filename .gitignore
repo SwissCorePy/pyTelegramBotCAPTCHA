@@ -2,3 +2,4 @@
 *.txt
 pyTelegramBotCAPTCHA.egg-info/PKG-INFO
 .DS_Store
+dist/pyTelegramBotCAPTCHA-0.0.1.tar.gz
