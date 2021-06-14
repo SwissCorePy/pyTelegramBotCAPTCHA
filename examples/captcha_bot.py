@@ -5,7 +5,7 @@ from threading import Thread, Timer
 import telebot
 from telebot import types
 
-from telebot_captcha import Captcha, CaptchaManager
+from pyTelegramBotCAPTCHA import Captcha, CaptchaManager
 
 bot = telebot.TeleBot("token")
 captcha_manager = CaptchaManager(default_language="en", default_timeout=90)
