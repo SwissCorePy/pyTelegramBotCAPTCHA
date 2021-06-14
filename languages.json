@@ -1,0 +1,23 @@
+{
+    "en": {
+        "text": "Welcome, #USER!\nPlease enter the code to verify that you are a real user.\nYour code: ",
+        "wrong_user": "❌ : This is not your task!",
+        "try_again": "Please try it again!\nYour code: ",
+        "back": "Delete",
+        "submit": "Submit"
+    },
+    "de": {
+        "text": "Willkommen, #USER!\nBitte gib den Code ein um zu verifizieren dass du ein echter User bist.\nDein Code: ",
+        "wrong_user": "❌ : Das ist nicht deine Aufgabe!",
+        "try_again": "Bitte versuch es nochmals!\nDein Code: ",
+        "back": "Löschen",
+        "submit": "Bestätigen"
+    },
+    "ru": {
+        "text": "Добро пожаловать, #USER!\nПожалуйста, введите код, чтобы убедиться, что вы настоящий пользователь.\nВаш код: ",
+        "wrong_user": "❌ : Это не ваша задача!",
+        "try_again": "Пожалуйста, попробуйте еще раз!\nВаш код: ",
+        "back": "Удалить",
+        "submit": "Отправить"
+    }
+}
