@@ -1,15 +1,15 @@
 from setuptools import setup
 setup(
-    name='pyTelegramBotTools',
-    packages=['pyTelegramBotTools'],
+    name='pyTelegramBotCAPTCHA',
+    packages=['pyTelegramBotCAPTCHA'],
     version='0.0.1',
     license='gpl-3.0',
-    description='Some useful tools for Telegram bot developers using pyTelegramBotAPI with focus on security.',
+    description='An easy to use an (hopefully useful) captcha solution for pyTelegramBotAPI.',
     author='SwissCorePy',
     author_email='swisscore.py@gmail.com',
 
-    url='https://github.com/user/reponame',
-    download_url='https://github.com/user/reponame/archive/v_01.tar.gz',
+    url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA',
+    download_url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA/archive/refs/heads/main.zip',
 
     keywords=['Telegram', 'Captcha', 'pyTelegramPotAPI'],
     install_requires=['pyTelegramBotAPI', 'captcha', 'Pillow'],
