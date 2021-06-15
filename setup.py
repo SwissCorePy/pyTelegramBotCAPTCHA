@@ -6,12 +6,16 @@ except ImportError:
 setup(
     name='pyTelegramBotCAPTCHA',
     packages=['pyTelegramBotCAPTCHA'],
-    version='0.0.13',
+    version='0.0.14',
     license='gpl-3.0',
     description='An easy to use an (hopefully useful) captcha solution for pyTelegramBotAPI.',
     author='SwissCorePy',
     author_email='swisscore.py@gmail.com',
-
+    
+    package_data = {
+        # If any package contains *.txt or *.rst files, include them:
+        '': ['*.json', '*.ttf'],
+    },
     package_dir={'pyTelegramBotCAPTCHA': 'pyTelegramBotCAPTCHA'},
     
     url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA',
