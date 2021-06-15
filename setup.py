@@ -12,17 +12,14 @@ setup(
     author='SwissCorePy',
     author_email='swisscore.py@gmail.com',
     
-    package_data = {
-        # If any package contains *.txt or *.rst files, include them:
-        'data': ['*.json', '*.ttf'],
-    },
+    #package_data = {'data': ['*.json', '*.ttf'],},
     #include_package_data=True,
     package_dir={'pyTelegramBotCAPTCHA': 'pyTelegramBotCAPTCHA'},
     
     url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA',
     download_url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA/archive/refs/heads/main.zip',
 
-    keywords=['Telegram', 'Captcha', 'pyTelegramPotAPI'],
+    keywords=['Telegram', 'Captcha', 'pyTelegramBotAPI'],
     install_requires=['pyTelegramBotAPI', 'captcha', 'Pillow'],
     extras_require={'json': 'ujson'},
     
