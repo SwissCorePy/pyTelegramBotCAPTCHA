@@ -25,10 +25,11 @@ It's very easy to integrate into your existing bot and also easy to customize th
 from pyTelegramBotCAPTCHA CaptchaManager
 ```
 *Initialize the CaptchaManager*
-  
+
+Its required to pass the user_id of your bot! `bot.get_me().id`
 You can add the optional parameters `default_language`, `default_timeout` and `fonts`.
 ```
-captcha_manager = CaptchaManager(default_language="ru", default_timeout=90, fonts=["path/font1.ttf", "path/font2.ttf"])
+captcha_manager = CaptchaManager(`bot.get_me().id`, default_language="ru", default_timeout=90, fonts=["path/font1.ttf", "path/font2.ttf"])
 ``` 
 *Add chapcha handler functions:*
   
