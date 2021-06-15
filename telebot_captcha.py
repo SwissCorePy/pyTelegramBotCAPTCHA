@@ -17,7 +17,7 @@ from telebot import TeleBot, types
 
 
 _base_path = Path(__file__).parent.absolute()
-_fonts_path = _base_path / "fonts"
+_fonts_path = _base_path / "data" / "fonts"
 _captcha_saves = _base_path / ".captcha-saves"
 _fonts = []
 
@@ -25,35 +25,10 @@ _fonts = []
 MIN_TIMEOUT = 30
 MAX_TIMEOUT = 600
 
-languages = {
-    "en": {
-        "text": "Welcome, #USER!\nPlease enter the code to verify that you are a real user.\nYour code: ",
-        "wrong_user": "❌ : This is not your task!",
-        "try_again": "Please try it again!\nYour code: ",
-        "back": "Delete",
-        "submit": "Submit"
-    },
-    "de": {
-        "text": "Willkommen, #USER!\nBitte gib den Code ein um zu verifizieren dass du ein echter User bist.\nDein Code: ",
-        "wrong_user": "❌ : Das ist nicht deine Aufgabe!",
-        "try_again": "Bitte versuch es nochmals!\nDein Code: ",
-        "back": "Löschen",
-        "submit": "Bestätigen"
-    },
-    "ru": {
-        "text": "Добро пожаловать, #USER!\nПожалуйста, введите код, чтобы убедиться, что вы настоящий пользователь.\nВаш код: ",
-        "wrong_user": "❌ : Это не ваша задача!",
-        "try_again": "Пожалуйста, попробуйте еще раз!\nВаш код: ",
-        "back": "Удалить",
-        "submit": "Отправить"
-    }
-}
-
 digits = "1234567890"
 hexdigits = digits + "ABCDEF"
 
-
-
+languages = json.loads(open(str(_base_path / "data" / "languages.json"), "r").read())
 
 class Captcha:
     @staticmethod
@@ -87,7 +62,6 @@ class Captcha:
             self.image = None
             self.reply_markup = None
 
-            
         else:
             # Initialized by `CaptchaManager.send_random_captcha()`
             self._captcha_id = f"{chat.id}|{user.id}"
