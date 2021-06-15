@@ -5,6 +5,9 @@
 [![PyPi Package Version](https://img.shields.io/pypi/v/pyTelegramBotCAPTCHA.svg)](https://pypi.python.org/pypi/pyTelegramBotCAPTCHA)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/pyTelegramBotAPI.svg)](https://pypi.python.org/pypi/pyTelegramBotAPI)
 
+  
+![Example](https://i.ibb.co/jWv61xr/Bildschirmfoto-2021-06-15-um-17-52-15.png "Example how it looks")
+  
 ### Installation:
 ```
 pip install pyTelegramBotCAPTCHA
