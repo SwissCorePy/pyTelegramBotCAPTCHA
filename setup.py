@@ -2,11 +2,11 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-    
+
 setup(
     name='pyTelegramBotCAPTCHA',
     packages=['pyTelegramBotCAPTCHA'],
-    version='0.0.4',
+    version='0.0.5',
     license='gpl-3.0',
     description='An easy to use an (hopefully useful) captcha solution for pyTelegramBotAPI.',
     author='SwissCorePy',
