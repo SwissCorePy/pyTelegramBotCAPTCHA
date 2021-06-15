@@ -64,7 +64,7 @@ class Captcha:
 
         else:
             # Initialized by `CaptchaManager.send_random_captcha()`
-            self._captcha_id = f"{chat.id}|{user.id}"
+            self._captcha_id = f"{CaptchaManager._bot_id}|{chat.id}|{user.id}"
             self._timeout_thread = None
             self._timeout = timeout
             self._only_digits = only_digits
@@ -197,8 +197,9 @@ class Captcha:
 
 class CaptchaManager:
     _handlers = {"on_correct": None, "on_not_correct": None, "on_timeout": None}
+    _bot_id = None
 
-    def __init__(self, default_language: str="en", default_timeout: float=None, fonts: List=None) -> None:
+    def __init__(self, bot_id: int, default_language: str="en", default_timeout: float=None, fonts: List=None) -> None:
         """
         The Captcha Manager
 
@@ -211,6 +212,7 @@ class CaptchaManager:
         :param default_timeout: timeout to be useed if not defined in `send_random_captcha`
         :param fonts: fonts to be used to generate CAPTCHA images. (.ttf)
         """
+        self.__class__._bot_id = bot_id
         if default_language.lower() not in languages.keys():
             raise NotImplementedError (f"The Language '{default_language}' is not implemented yet")
         self.default_language = default_language.lower()
@@ -280,7 +282,7 @@ class CaptchaManager:
         if not callback.data.startswith("?cap|"): return
 
         user_id, btn = int(callback.data.split("|")[1]), callback.data.split("|")[2]
-        captcha_id = f"{callback.message.chat.id}|{user_id}"
+        captcha_id = f"{self.__class__._bot_id}|{callback.message.chat.id}|{user_id}"
         captcha: Captcha = self.captchas[captcha_id]
 
         if captcha.user.id != user_id:
@@ -393,7 +395,7 @@ class CaptchaManager:
 
     def _check_captcha(self, callback: types.CallbackQuery):
         user_id = int(callback.data.split("|")[1])
-        captcha_id = f"{callback.message.chat.id}|{user_id}"
+        captcha_id = f"{self.__class__._bot_id}|{callback.message.chat.id}|{user_id}"
         if (captcha_id in self.captchas):
             captcha: Captcha = self.captchas[captcha_id]
             is_correct = captcha.users_code == captcha.correct_code
