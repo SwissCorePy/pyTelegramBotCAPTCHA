@@ -106,7 +106,7 @@ The `Captcha` object has the following attributes:
   * `created_at` (float) the timestemp when the CAPTCHA was created
   * `previous_tries` (int) the number of tries the user made
   * `incorrect_digits` (int) the number of digits that dont match
-  * `solved`(bool) has the user solved the CAPTCHA? it does not matter if he solved it correct
+  * `solved` (bool) has the user solved the CAPTCHA? it does not matter if he solved it correct
 
 Lets add our first captcha handler that handles correct solved CAPTCHAs.
   
