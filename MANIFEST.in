@@ -1,0 +1,4 @@
+include LICENSE
+include README.rst
+recursive-include pyTelegramBotCAPTCHA/data *.json
+recursive-include pyTelegramBotCAPTCHA/data *.ttf
