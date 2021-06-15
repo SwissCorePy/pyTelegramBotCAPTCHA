@@ -12,7 +12,6 @@ bot = telebot.TeleBot("token")
 # Import the CaptchaManager
 from pyTelegramBotCAPTCHA import Captcha, CaptchaManager
 
-
 # Initialize the CaptchaManager
 #   `default_language`: str = The language to use if not defined in 
 #       `captcha_manager.send_random_captcha(...)`

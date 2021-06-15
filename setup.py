@@ -1,7 +1,4 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='pyTelegramBotCAPTCHA',
@@ -12,15 +9,15 @@ setup(
     author='SwissCorePy',
     author_email='swisscore.py@gmail.com',
     
-    #package_data = {'data': ['*.json', '*.ttf'],},
-    #include_package_data=True,
     package_dir={'pyTelegramBotCAPTCHA': 'pyTelegramBotCAPTCHA'},
+    include_package_data=True,
+
     
     url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA',
     download_url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA/archive/refs/heads/main.zip',
 
     keywords=['Telegram', 'Captcha', 'pyTelegramBotAPI'],
-    install_requires=['pyTelegramBotAPI', 'captcha', 'Pillow'],
+    install_requires=['pyTelegramBotAPI==3.7.7', 'captcha', 'Pillow'],
     extras_require={'json': 'ujson'},
     
     classifiers=[
