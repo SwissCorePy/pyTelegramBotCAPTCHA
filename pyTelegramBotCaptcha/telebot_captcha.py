@@ -208,6 +208,7 @@ class CaptchaManager:
         the fonts are loaded into your memory, so keep them a lot, but not too
         many.
 
+        :param bot_id: the user_id of your bot `bot.get_me().id`
         :param default_language: language to be used if not defined in `send_random_captcha`
         :param default_timeout: timeout to be useed if not defined in `send_random_captcha`
         :param fonts: fonts to be used to generate CAPTCHA images. (.ttf)
