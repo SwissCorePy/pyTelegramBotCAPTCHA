@@ -58,7 +58,7 @@ You can add the following optional parameters:
   * `language` (str) to choose a language
   * `add_noise` (bool) to add noise to the image
   * `only_digits` (bool) to use only ditgits instead of hexdigits
-  * `timeout` (float) to set a timeout for the captcha in seconds. if not defined in `default_timeout` nor `timeout`the user has infinit time to solve the captcha 
+  * `timeout` (float) to set a timeout for the captcha in seconds. if not defined in `default_timeout` or `timeout`, the user has infinite time to solve the captcha 
   
 ```python
 @bot.message_handler(content_types=["new_chat_members"])
