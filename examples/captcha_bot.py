@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
-from threading import Thread, Timer
 
 import telebot
 from telebot import types
 
 
 bot = telebot.TeleBot("token")
-
+bot_id = bot.get_me().id
 
 # Import the CaptchaManager
 from pyTelegramBotCAPTCHA import Captcha, CaptchaManager
 
 # Initialize the CaptchaManager
+#   `bot_id`: int = the user_id of your bot
 #   `default_language`: str = The language to use if not defined in 
 #       `captcha_manager.send_random_captcha(...)`
 #   `default_timeout`: float = The timeout (in seconds) to use if not defined in
 #       `captcha_manager.send_random_captcha(...)`
-captcha_manager = CaptchaManager(default_language="en", default_timeout=90)
+captcha_manager = CaptchaManager(bot_id=bot_id, default_language="en", default_timeout=90)
 
 
 
