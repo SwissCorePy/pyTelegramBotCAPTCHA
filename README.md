@@ -53,7 +53,7 @@ captcha_manager = CaptchaManager(bot.get_me().id, default_language="ru", default
 #### Add a message handler for new chat members:
 
 We restrict the new chat member and send a new captcha that he must solve. <br />
-Its required to pass your `TeleBot`instance, the `Chat`object and the `User` object.
+Its required to pass your `TeleBot`instance, the `Chat` object and the `User` object. <br />
 You can add the following optional parameters:
   * `language` (str) to choose a language
   * `add_noise` (bool) to add noise to the image
@@ -79,8 +79,8 @@ def new_member(message: types.Message):
   
 #### Add a callback message handler:
 
-Its required to pass your `TeleBot` instance the `CallbackQuery` object.
-The function automatically returns if `callback` was not from a CAPTCHA button.
+Its required to pass your `TeleBot` instance the `CallbackQuery` object. <br />
+The function automatically returns if `callback` was not from a CAPTCHA button. <br />
 If the wrong user clicks on a button he gets an callback answer and the function returns.
   
 ```python
@@ -121,10 +121,10 @@ def on_correct(captcha):
 ```
 
 Lets add a handler that handles wrong solved CAPTCHAs. We give the user a second try if only one digit was wrong and the user only tried it once. <br />
-We use the attributes `incorrect_digits` and `previous_tries`
+We use the attributes `incorrect_digits` and `previous_tries`.
   
 ```python
-@chaptcha_manager.on_chatcha_not_correct
+@captcha_manager.on_captcha_not_correct
 def on_not_correct(captcha):
   if (captcha.incorrect_digits == 1 and captcha.previous_tries < 2):
     captcha_manager.refresh_captcha(bot, captcha)
@@ -138,7 +138,7 @@ def on_not_correct(captcha):
 Now lets add a handler that handles timed out CAPTCHAs
                                                                     
 ```python
-@chaptcha_manager.on_captcha_timeout
+@captcha_manager.on_captcha_timeout
 def on_timeout(captcha):
   # We ban the chat member because he did not solve the CAPTCHA.
   bot.kick_chat_member(captcha.chat.id, captcha.user.id)
