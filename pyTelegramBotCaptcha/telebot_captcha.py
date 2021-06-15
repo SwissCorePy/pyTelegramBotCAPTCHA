@@ -228,12 +228,13 @@ class CaptchaManager:
                     _fonts.append(str(_fonts_path / f))
 
         self.captchas = {}
-        saved_captchas = os.listdir(_captcha_saves)
-        for f in saved_captchas:
-            if f.endswith(".json") and not f.startswith("."):
-                json_dict = Captcha.de_json(open(str(_captcha_saves / f), "r").read())
-                captcha = Captcha(**json_dict)
-                self.captchas[captcha._captcha_id] = captcha
+        if os.path.exists(_captcha_saves):
+            saved_captchas = os.listdir(_captcha_saves)
+            for f in saved_captchas:
+                if f.endswith(".json") and not f.startswith("."):
+                    json_dict = Captcha.de_json(open(str(_captcha_saves / f), "r").read())
+                    captcha = Captcha(**json_dict)
+                    self.captchas[captcha._captcha_id] = captcha
 
     def send_random_captcha(self, bot: TeleBot, chat: types.Chat, user: types.User, language: str=None, only_digits: bool=False, add_noise: bool=True, timeout: float=None) -> Captcha:
         """

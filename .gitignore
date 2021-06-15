@@ -8,3 +8,4 @@ fonts/.DS_Store
 fonts/.DS_Store
 fonts/_originals/.DS_Store
 pyTelegramBotCaptcha/pyTelegramBotCAPTCHA.egg-info/PKG-INFO
+*.egg
