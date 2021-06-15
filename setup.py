@@ -11,7 +11,7 @@ setup(
     description='An easy to use an (hopefully useful) captcha solution for pyTelegramBotAPI.',
     author='SwissCorePy',
     author_email='swisscore.py@gmail.com',
-    include_package_data=True,
+
     package_dir={'pyTelegramBotCAPTCHA': 'pyTelegramBotCAPTCHA'},
     
     url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA',
