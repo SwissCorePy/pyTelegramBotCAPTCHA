@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='pyTelegramBotCAPTCHA',
     packages=['pyTelegramBotCAPTCHA'],
-    version='0.0.20',
+    version='0.1.0',
     license='gpl-3.0',
     description='An easy to use an (hopefully useful) captcha solution for pyTelegramBotAPI.',
     author='SwissCorePy',
@@ -22,7 +22,7 @@ setup(
     
     classifiers=[
         # "3 - Alpha", "4 - Beta", "5 - Production/Stable"
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3'
