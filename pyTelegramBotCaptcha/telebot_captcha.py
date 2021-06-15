@@ -124,7 +124,6 @@ class Captcha:
             "language": self.language,
             "users_code": self.users_code,
             "correct_code": self.correct_code,
-            "language": self.language,
             "message_id": self.message_id,
             "timeout": self._timeout,
             "created_at": self.created_at,
@@ -235,9 +234,10 @@ class CaptchaManager:
             saved_captchas = os.listdir(_captcha_saves)
             for f in saved_captchas:
                 if f.endswith(".json") and not f.startswith("."):
-                    json_dict = Captcha.de_json(open(str(_captcha_saves / f), "r").read())
-                    captcha = Captcha(**json_dict)
-                    self.captchas[captcha._captcha_id] = captcha
+                    if f.startswith(f"{self._bot_id}|"):
+                        json_dict = Captcha.de_json(open(str(_captcha_saves / f), "r").read())
+                        captcha = Captcha(**json_dict)
+                        self.captchas[captcha._captcha_id] = captcha
 
     def send_random_captcha(self, bot: TeleBot, chat: types.Chat, user: types.User, language: str=None, only_digits: bool=False, add_noise: bool=True, timeout: float=None) -> Captcha:
         """
