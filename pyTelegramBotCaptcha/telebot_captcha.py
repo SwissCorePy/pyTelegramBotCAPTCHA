@@ -274,6 +274,42 @@ class CaptchaManager:
         self.captchas[captcha._captcha_id] = captcha
         return captcha
 
+    def restrict_chat_member(self, bot: TeleBot, chat_id: int, user_id: int) -> bool:
+        """
+        Set all permissions of a chat member to `False`.
+        :param bot: your TeleBot instance
+        :param chat_id: the Chat ID
+        :param user_id: the User ID
+        :retrun: True on sucess
+        """
+        return bot.restrict_chat_member(chat_id, user_id,
+            can_send_messages=False,
+            can_send_media_messages=False,
+            can_send_polls=False,
+            can_send_other_messages=False,
+            can_add_web_page_previews=False,
+            can_change_info=False,
+            can_invite_users=False,
+            can_pin_messages=False)
+    
+    def unrestrict_chat_member(self, bot: TeleBot, chat_id: int, user_id: int):
+        """
+        Set all permissions of a chat member to `True` which removes the restriction.
+        :param bot: your TeleBot instance
+        :param chat_id: the Chat ID
+        :param user_id: the User ID
+        :retrun: True on sucess
+        """
+        return bot.restrict_chat_member(chat_id, user_id,
+            can_send_messages=True,
+            can_send_media_messages=True,
+            can_send_polls=True,
+            can_send_other_messages=True,
+            can_add_web_page_previews=True,
+            can_change_info=True,
+            can_invite_users=True,
+            can_pin_messages=True)
+
     def update_captcha(self, bot: TeleBot, callback: types.CallbackQuery) -> None:
         """
         updates the captcha if a user has pressed a button. if submit is pressed the captcha gets checked
