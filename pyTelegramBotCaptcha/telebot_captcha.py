@@ -2,7 +2,7 @@
 import os
 import random
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, Tuple, List
 from threading import Thread, Timer
 
@@ -49,15 +49,17 @@ class Captcha:
             self.chat = types.Chat(**chat)
             self.user = types.User(**user)
             self.language = language
+            self.previous_tries = kwargs["previous_tries"]
             self.correct_code = kwargs["correct_code"]
-            self.text = languages[self.language]["text"].replace("#USER", _user_link(self.user))
+            text = languages[self.language]["text"].replace("#USER", _user_link(self.user))
+            self.text = text if self.previous_tries == 0 else languages[self.language]["try_again"]
             self.users_code = kwargs["users_code"]
             self.message_id = kwargs["message_id"]
             self.created_at = kwargs["created_at"]
             self._timeout = timeout
             self._timeout_thread = None
             self._captcha_id = kwargs["captcha_id"]
-            self.previous_tries = kwargs["previous_tries"]
+            
             self._only_digits = only_digits
             self._add_noise = add_noise
 
@@ -353,6 +355,7 @@ class CaptchaManager:
         captcha._solved = False
 
     def delete_captcha(self, bot: TeleBot, captcha: Captcha) -> None:
+        self.captchas.pop(captcha._captcha_id)
         captcha._delete_file()
         try: bot.delete_message(captcha.chat.id, captcha.message_id)
         except: pass
