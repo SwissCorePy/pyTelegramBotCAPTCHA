@@ -147,8 +147,10 @@ class Captcha:
                 self._timeout_thread = Timer(interval=exec_at-now, function=CaptchaManager._handlers["on_timeout"], args=[self])
             self._timeout_thread.start()
 
-    def _refresh(self, bot: TeleBot, only_digits=False, add_noise=True) -> None:
+    def _refresh(self, bot: TeleBot, only_digits=False, add_noise=True, timeout=None) -> None:
         new_code, new_image = _random_codeimage(only_digits, add_noise)
+        self._timeout = timeout
+        self.created_at = datetime.now().timestamp()
         self.correct_code = new_code
         self.users_code = ""
         self.text = languages[self.language]["try_again"]
@@ -338,8 +340,8 @@ class CaptchaManager:
         bot.answer_callback_query(callback.id)
     
     def refresh_captcha(self, bot: TeleBot, captcha: Captcha, only_digits=False, add_noise=True, timeout: float=None) -> None:
-        captcha._refresh(bot, only_digits, add_noise)
         timeout = timeout or self.default_timeout
+        captcha._refresh(bot, only_digits, add_noise, timeout)
         if timeout:
             if not MIN_TIMEOUT < timeout < MAX_TIMEOUT:
                 raise ValueError(f"`timeout` must be between {MIN_TIMEOUT} and {MAX_TIMEOUT} seconds or `None`")
