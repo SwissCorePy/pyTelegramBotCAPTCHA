@@ -151,10 +151,11 @@ class Captcha:
         new_code, new_image = _random_codeimage(only_digits, add_noise)
         self._timeout = timeout
         self.created_at = datetime.now().timestamp()
+        self.image = new_image
         self.correct_code = new_code
         self.users_code = ""
         self.text = languages[self.language]["try_again"]
-        self.image = new_image
+        
         self.reply_markup = _code_input_markup(self.user.id, "en", only_digits)
 
         bot.edit_message_media(
