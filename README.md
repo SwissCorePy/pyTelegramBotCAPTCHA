@@ -124,7 +124,7 @@ Lets add our first CAPTCHA handler that handles correct solved CAPTCHAs.
 # Handler for correct solved CAPTCHAs
 @captcha_manager.on_captcha_correct
 def on_correct(captcha):
-  bot.send_message(captcha.chat.id, "Congrats! You solved the CAPTCHA")
+  bot.send_message(captcha.chat.id, "Congrats! You solved the CAPTCHA!")
   # We unrestrict the chat member because he solved the CAPTCHA correct.
   captcha_manager.unrestrict_chat_member(bot, captcha.chat.id, captcha.user.id)
   # Delete the CAPTCHA
@@ -150,7 +150,7 @@ def on_not_correct(captcha):
   else:
     # We ban the chat member because he failed solving the CAPTCHA.
     bot.kick_chat_member(captcha.chat.id, captcha.user.id)
-    bot.send_message(captcha.chat.id, f"{captcha.user.first_name} failed solvinng the CAPTCHA and was banned!")
+    bot.send_message(captcha.chat.id, f"{captcha.user.first_name} failed solving the CAPTCHA and was banned!")
     # Delete the CAPTCHA
     captcha_manager.delete_captcha(bot, captcha)
 ```
@@ -196,7 +196,7 @@ def on_callback(callback):
 # Handler for correct solved CAPTCHAs
 @captcha_manager.on_captcha_correct
 def on_correct(captcha):
-  bot.send_message(captcha.chat.id, "Congrats! You solved the CAPTCHA")
+  bot.send_message(captcha.chat.id, "Congrats! You solved the CAPTCHA!")
   captcha_manager.unrestrict_chat_member(bot, captcha.chat.id, captcha.user.id)
   captcha_manager.delete_captcha(bot, captcha)
 
@@ -207,7 +207,7 @@ def on_not_correct(captcha):
     captcha_manager.refresh_captcha(bot, captcha)
   else:
     bot.kick_chat_member(captcha.chat.id, captcha.user.id)
-    bot.send_message(captcha.chat.id, f"{captcha.user.first_name} failed solvinng the CAPTCHA and was banned!")
+    bot.send_message(captcha.chat.id, f"{captcha.user.first_name} failed solving the CAPTCHA and was banned!")
     captcha_manager.delete_captcha(bot, captcha)
   
 # Handler for timed out CAPTCHAS
