@@ -164,6 +164,7 @@ def on_timeout(captcha):
   # We ban the chat member because he did not solve the CAPTCHA.
   bot.kick_chat_member(captcha.chat.id, captcha.user.id)
   bot.send_message(captcha.chat.id, f"{captcha.user.first_name} did not solve the CAPTCHA and was banned!")
+  # Delete the CAPTCHA
   captcha_manager.delete_captcha(bot, captcha)
 ```
 
