@@ -28,7 +28,9 @@ MAX_TIMEOUT = 600
 digits = "1234567890"
 hexdigits = digits + "ABCDEF"
 
-languages = json.loads(open(str(_base_path / "data" / "languages.json"), "r").read())
+languages = None 
+with open(str(_base_path / "data" / "languages.json"), "r") as f:
+    languages = json.loads(f.read())
 
 class Captcha:
     @staticmethod
@@ -235,7 +237,9 @@ class CaptchaManager:
             for f in saved_captchas:
                 if f.endswith(".json") and not f.startswith("."):
                     if f.startswith(f"{self._bot_id}|"):
-                        json_dict = Captcha.de_json(open(str(_captcha_saves / f), "r").read())
+                        json_dict = None
+                        with open(str(_captcha_saves / f), "r") as f:
+                            json_dict = Captcha.de_json(f.read())
                         captcha = Captcha(**json_dict)
                         self.captchas[captcha._captcha_id] = captcha
 
