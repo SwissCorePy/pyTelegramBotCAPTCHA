@@ -69,15 +69,14 @@ You can add the following optional parameters:
 # Message handler for new chat members
 @bot.message_handler(content_types=["new_chat_members"])
 def new_member(message):
-  # get the new chat member
-  new_user_id = message.json.get("new_chat_member").get("id")
-  new_user = bot.get_chat_member(message.chat.id, new_user_id).user
+  # get the new chat members
+  for user in message.new_chat_members:
 
-  # Restrict the new chat member
-  captcha_manager.restrict_chat_member(bot, message.chat.id, new_user.id)
+    # Restrict the new chat member
+    captcha_manager.restrict_chat_member(bot, message.chat.id, user.id)
 
-  # send random CAPTCHA
-  captcha_manager.send_random_captcha(bot, message.chat, new_user)
+    # send random CAPTCHA
+    captcha_manager.send_random_captcha(bot, message.chat, user)
 ```
 
 ---
