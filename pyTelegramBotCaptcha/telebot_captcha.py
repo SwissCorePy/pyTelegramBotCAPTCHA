@@ -18,9 +18,8 @@ from telebot import TeleBot, types
 
 _base_path = Path(__file__).parent.absolute()
 _fonts_path = _base_path / "data" / "fonts"
-_captcha_saves = _base_path / ".captcha-saves"
+_captcha_saves = (Path(".") / ".captcha-saves").parent.absolute()
 _fonts = []
-
 
 MIN_TIMEOUT = 30
 MAX_TIMEOUT = 600
