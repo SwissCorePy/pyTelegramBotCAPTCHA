@@ -330,7 +330,7 @@ class CaptchaManager:
         captcha_id = f"{self.__class__._bot_id}|{callback.message.chat.id}|{user_id}"
         captcha: Captcha = self.captchas[captcha_id]
 
-        if captcha.user.id != user_id:
+        if captcha.user.id != callback.from_user.id:
             bot.answer_callback_query(callback.id, text=languages[captcha.language]["wrong_user"])
             return
         
