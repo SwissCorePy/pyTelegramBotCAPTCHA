@@ -78,6 +78,7 @@ def new_member(message):
     # send random CAPTCHA
     captcha_manager.send_random_captcha(bot, message.chat, user)
 ```
+*Note: Service messages about non-bot users joining the chat will be soon removed from large groups. We recommend using the “chat_member” update as a replacement.*
 
 ---
 
