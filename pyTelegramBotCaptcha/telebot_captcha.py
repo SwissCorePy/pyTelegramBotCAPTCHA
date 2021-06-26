@@ -28,16 +28,20 @@ digits = "1234567890"
 hexdigits = digits + "ABCDEF"
 
 languages = None 
-with open(str(_base_path / "data" / "languages.json"), "r") as f:
+with (_base_path / "data" / "languages.json").open("r") as f:
     languages = json.loads(f.read())
 
-class Captcha:
-    @staticmethod
-    def de_json(json_str):
-        if json_str: return json.loads(json_str)
-        return None
+class Captcha(types.JsonDeserializable, types.JsonSerializable):
+    @classmethod
+    def de_json(cls, json_str):
+        if not json_str: return None
+        obj = json.loads(json_str)
+        obj['chat'] = types.Chat(**obj['chat'])
+        obj['user'] = types.User(**obj['user'])
+        return cls(**obj)
 
-    def __init__(self, chat: types.Chat, user: types.User, language: str, timeout: float, only_digits: bool, add_noise: bool, bot: TeleBot=None, **kwargs) -> None:
+    def __init__(self, chat: types.Chat, user: types.User, language: str, timeout: float, 
+            only_digits: bool, add_noise: bool, bot: TeleBot=None, **kwargs) -> None:
         """
         The Captcha object. Do not call this function yourself. 
         Use `captcha_manager.send_random_captcha(...)` instead
@@ -45,8 +49,8 @@ class Captcha:
         self._solved = False
         if not bot:
             # Loaded from file
-            self.chat = types.Chat(**chat)
-            self.user = types.User(**user)
+            self.chat = chat
+            self.user = user
             self.language = language
             self.previous_tries = kwargs["previous_tries"]
             self.correct_code = kwargs["correct_code"]
@@ -144,7 +148,8 @@ class Captcha:
             if now >= exec_at:
                 self._timeout_thread = Thread(target=CaptchaManager._handlers["on_timeout"], args=[self])
             else:
-                self._timeout_thread = Timer(interval=exec_at-now, function=CaptchaManager._handlers["on_timeout"], args=[self])
+                self._timeout_thread = Timer(interval=exec_at-now, 
+                    function=CaptchaManager._handlers["on_timeout"], args=[self])
             self._timeout_thread.start()
 
     def _refresh(self, bot: TeleBot, only_digits=False, add_noise=True, timeout=None) -> None:
@@ -170,9 +175,6 @@ class Captcha:
             os.mkdir(_captcha_saves)
         filename = self._captcha_id + ".json"
         filepath = _captcha_saves / filename
-        print(filename)
-        print(_captcha_saves)
-        print(_captcha_saves / filename)
         with open(filepath, "w+",encoding="utf8") as f:
             f.write(self.to_json())
     
@@ -245,14 +247,14 @@ class CaptchaManager:
             for f in saved_captchas:
                 if f.endswith(".json") and not f.startswith("."):
                     if f.startswith(f"{self._bot_id}="):
-                        json_dict = None
                         filepath = _captcha_saves / f
                         with filepath.open("r") as f:
-                            json_dict = Captcha.de_json(f.read())
-                        captcha = Captcha(**json_dict)
-                        self.captchas[captcha._captcha_id] = captcha
+                            json_str = f.read()
+                            captcha = Captcha.de_json(json_str)
+                            self.captchas[captcha._captcha_id] = captcha
 
-    def send_random_captcha(self, bot: TeleBot, chat: types.Chat, user: types.User, language: str=None, only_digits: bool=False, add_noise: bool=True, timeout: float=None) -> Captcha:
+    def send_random_captcha(self, bot: TeleBot, chat: types.Chat, user: types.User, language: str=None, 
+            only_digits: bool=False, add_noise: bool=True, timeout: float=None) -> Captcha:
         """
         sends a randomly generated captcha into your chat.
         :param bot: your TeleBot instance
@@ -346,7 +348,8 @@ class CaptchaManager:
         
         bot.answer_callback_query(callback.id)
     
-    def refresh_captcha(self, bot: TeleBot, captcha: Captcha, only_digits=False, add_noise=True, timeout: float=None) -> None:
+    def refresh_captcha(self, bot: TeleBot, captcha: Captcha, 
+            only_digits=False, add_noise=True, timeout: float=None) -> None:
         timeout = timeout or self.default_timeout
         captcha._refresh(bot, only_digits, add_noise, timeout)
         if timeout:
