@@ -67,7 +67,7 @@ class Captcha:
 
         else:
             # Initialized by `CaptchaManager.send_random_captcha()`
-            self._captcha_id = f"{CaptchaManager._bot_id}|{chat.id}|{user.id}"
+            self._captcha_id = f"{CaptchaManager._bot_id}={chat.id}={user.id}"
             self._timeout_thread = None
             self._timeout = timeout
             self._only_digits = only_digits
@@ -135,8 +135,7 @@ class Captcha:
             "add_noise": self._add_noise,
             "previous_tries": self.previous_tries
         }
-        return json.dumps(json_dict, ensure_ascii=False, 
-            escape_forward_slashes=False, encode_html_chars=False)
+        return json.dumps(json_dict)
 
     def _continue_timeout(self):
         if self._timeout and CaptchaManager._handlers["on_timeout"]:
@@ -171,7 +170,10 @@ class Captcha:
             os.mkdir(_captcha_saves)
         filename = self._captcha_id + ".json"
         filepath = _captcha_saves / filename
-        with filepath.open("w") as f:
+        print(filename)
+        print(_captcha_saves)
+        print(_captcha_saves / filename)
+        with open(filepath, "w+",encoding="utf8") as f:
             f.write(self.to_json())
     
     def _delete_file(self):
@@ -181,7 +183,7 @@ class Captcha:
             filepath.unlink()
 
     def _update(self, bot: TeleBot, callback: types.CallbackQuery):
-        btn = callback.data.split("|")[2]
+        btn = callback.data.split("=")[2]
         if (btn == "BACK"):
             self.users_code = self.users_code[:-1]
         else:
@@ -242,7 +244,7 @@ class CaptchaManager:
             saved_captchas = os.listdir(_captcha_saves)
             for f in saved_captchas:
                 if f.endswith(".json") and not f.startswith("."):
-                    if f.startswith(f"{self._bot_id}|"):
+                    if f.startswith(f"{self._bot_id}="):
                         json_dict = None
                         filepath = _captcha_saves / f
                         with filepath.open("r") as f:
@@ -327,10 +329,10 @@ class CaptchaManager:
         :param bot: your TeleBot instance
         :param callback: the CallbackQuery
         """
-        if not callback.data.startswith("?cap|"): return
+        if not callback.data.startswith("?cap="): return
 
-        user_id, btn = int(callback.data.split("|")[1]), callback.data.split("|")[2]
-        captcha_id = f"{self.__class__._bot_id}|{callback.message.chat.id}|{user_id}"
+        user_id, btn = int(callback.data.split("=")[1]), callback.data.split("=")[2]
+        captcha_id = f"{self.__class__._bot_id}={callback.message.chat.id}={user_id}"
         captcha: Captcha = self.captchas[captcha_id]
 
         if captcha.user.id != callback.from_user.id:
@@ -357,7 +359,7 @@ class CaptchaManager:
         captcha._solved = False
 
     def delete_captcha(self, bot: TeleBot, captcha: Captcha) -> None:
-        self.captchas.pop(captcha._captcha_id)
+        #self.captchas.pop(captcha._captcha_id)
         captcha._delete_file()
         try: bot.delete_message(captcha.chat.id, captcha.message_id)
         except: pass
@@ -443,8 +445,8 @@ class CaptchaManager:
         return wrapper
 
     def _check_captcha(self, callback: types.CallbackQuery):
-        user_id = int(callback.data.split("|")[1])
-        captcha_id = f"{self.__class__._bot_id}|{callback.message.chat.id}|{user_id}"
+        user_id = int(callback.data.split("=")[1])
+        captcha_id = f"{self.__class__._bot_id}={callback.message.chat.id}={user_id}"
         if (captcha_id in self.captchas):
             captcha: Captcha = self.captchas[captcha_id]
             is_correct = captcha.users_code == captcha.correct_code
@@ -463,10 +465,10 @@ class CaptchaManager:
 def _code_input_markup(user_id: int, language: str, only_digits: bool) -> types.InlineKeyboardMarkup:
     values = {}
     for char in (digits if only_digits else hexdigits):
-        values[char] = {"callback_data": f"?cap|{user_id}|{char}"}
+        values[char] = {"callback_data": f"?cap={user_id}={char}"}
     return _quick_markup({**values,
-        languages[language]["back"]: {"callback_data": f"?cap|{user_id}|BACK"},
-        languages[language]["submit"]: {"callback_data": f"?cap|{user_id}|OK"}
+        languages[language]["back"]: {"callback_data": f"?cap={user_id}=BACK"},
+        languages[language]["submit"]: {"callback_data": f"?cap={user_id}=OK"}
     }, 5 if only_digits else 4)
   
 def _quick_markup(values, row_width=4) -> types.InlineKeyboardMarkup:
