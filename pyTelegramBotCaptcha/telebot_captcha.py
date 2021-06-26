@@ -169,14 +169,16 @@ class Captcha:
     def _save_file(self):
         if not os.path.exists(str(_captcha_saves)):
             os.mkdir(_captcha_saves)
-        filepath = str(_captcha_saves / self._captcha_id) + ".json"
-        with open(filepath, "w") as f:
+        filename = self._captcha_id + ".json"
+        filepath = _captcha_saves / filename
+        with filepath.open("w") as f:
             f.write(self.to_json())
     
     def _delete_file(self):
-        filepath = str(_captcha_saves / self._captcha_id) + ".json"
-        if os.path.exists(filepath):
-            os.remove(filepath)
+        filename = self._captcha_id + ".json"
+        filepath = _captcha_saves / filename
+        if filepath.exists():
+            filepath.unlink()
 
     def _update(self, bot: TeleBot, callback: types.CallbackQuery):
         btn = callback.data.split("|")[2]
@@ -242,7 +244,8 @@ class CaptchaManager:
                 if f.endswith(".json") and not f.startswith("."):
                     if f.startswith(f"{self._bot_id}|"):
                         json_dict = None
-                        with open(str(_captcha_saves / f), "r") as f:
+                        filepath = _captcha_saves / f
+                        with filepath.open("r") as f:
                             json_dict = Captcha.de_json(f.read())
                         captcha = Captcha(**json_dict)
                         self.captchas[captcha._captcha_id] = captcha
