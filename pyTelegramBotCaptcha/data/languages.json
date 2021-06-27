@@ -19,5 +19,12 @@
         "try_again": "Пожалуйста, попробуйте еще раз!\nВаш код: ",
         "back": "Удалить",
         "submit": "Отправить"
+    },
+    "uz": {
+        "text": "Assalomu alaykum, #USER!\nIltimos, kodni kiriting..\nSizning kodingiz: ",
+        "wrong_user": "❌ : Bu sizning ishingiz emas-ku!",
+        "try_again": "Iltimos, qayta urining!\nSizning kodingiz: ",
+        "back": "O'chirish",
+        "submit": "Yuborish"
     }
 }
