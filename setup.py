@@ -23,7 +23,7 @@ setup(
     download_url='https://github.com/SwissCorePy/pyTelegramBotCAPTCHA/archive/refs/heads/main.zip',
 
     keywords=['Telegram', 'Captcha', 'pyTelegramBotAPI'],
-    install_requires=['pyTelegramBotAPI==3.8.1', 'captcha', 'Pillow'],
+    install_requires=['pyTelegramBotAPI>=3.8.1', 'captcha', 'Pillow'],
     extras_require={'json': 'ujson'},
     
     classifiers=[
