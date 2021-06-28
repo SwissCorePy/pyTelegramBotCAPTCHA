@@ -42,7 +42,7 @@ from pyTelegramBotCAPTCHA import CaptchaManager
 
 `CaptchaManager` requires the `user_id` of your `TeleBot` instance! You get it with `bot.get_me().id` <br />
 You can add the following optional parameters:
-  * `default_language` (str) the default language to use if not set in `captcha_manager.send_random_captcha(...)`. Default is "en". Currently supported "en", "ru" and "de"
+  * `default_language` (str) the default language to use if not set in `captcha_manager.send_random_captcha(...)`. Default is "en". Currently supported "en", "ru" , "de" and "uz"
   * `default_timeout` (float) the default timeout to use if not set in `captcha_manager.send_random_captcha(...)`. Default is `None` but we will use a `default_timeout` of 90 seconds for our CAPTCHAs.
   * `fonts` (list) the fonts to use instead of the builtin ones (must be a list of .ttf file paths). You can choose as many fonts as you like, but keep in mind that all the fonts are loaded into your memory, so use a lot but not to many. <br />
   

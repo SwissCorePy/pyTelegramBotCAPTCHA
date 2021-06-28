@@ -28,7 +28,8 @@ digits = "1234567890"
 hexdigits = digits + "ABCDEF"
 
 languages = None 
-with (_base_path / "data" / "languages.json").open("r") as f:
+with (_base_path / "data" / "languages.json").open("r",encoding='utf-8') as f:
+
     languages = json.loads(f.read())
 
 class Captcha(types.JsonDeserializable, types.JsonSerializable):
