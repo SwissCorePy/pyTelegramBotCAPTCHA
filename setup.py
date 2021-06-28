@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 setup(
     name='pyTelegramBotCAPTCHA',
     packages=['pyTelegramBotCAPTCHA'],
-    version='0.1.7',
+    version='1.0.0',
     author='SwissCorePy',
     author_email='swisscore.py@gmail.com',
 
@@ -28,7 +28,7 @@ setup(
     
     classifiers=[
         # "3 - Alpha", "4 - Beta", "5 - Production/Stable"
-        'Development Status :: 4 - Beta',
+        '5 - Production/Stable',
         'Environment :: Console',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3'
