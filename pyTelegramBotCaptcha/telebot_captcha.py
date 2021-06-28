@@ -59,7 +59,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             self.text = text if self.previous_tries == 0 else languages[self.language]["try_again"]
             self.users_code = kwargs["users_code"]
             self.message_id = kwargs["message_id"]
-            self.created_at = kwargs["created_at"]
+            self.date = kwargs["date"]
             self._timeout = timeout
             self._timeout_thread = None
             self._captcha_id = kwargs["captcha_id"]
@@ -78,7 +78,6 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             self._only_digits = only_digits
             self._add_noise = add_noise
             
-            self.created_at = datetime.now().timestamp()
             self.chat = chat
             self.user = user
             self.users_code = ""
@@ -89,13 +88,15 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             self.correct_code, self.image = _random_codeimage(self._only_digits, self._add_noise)
             self.reply_markup = _code_input_markup(user_id=user.id, language=language, only_digits=only_digits)
 
-            self.message_id = bot.send_photo(
+            m = self.message_id = bot.send_photo(
                 chat_id=self.chat.id, 
                 photo=self.image,
                 caption=self.text,
                 reply_markup=self.reply_markup,
                 parse_mode="HTML"
-            ).message_id
+            )
+            self.message_id = m.message_id
+            self.date = m.date
             self._save_file()
 
     @property
@@ -134,7 +135,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             "correct_code": self.correct_code,
             "message_id": self.message_id,
             "timeout": self._timeout,
-            "created_at": self.created_at,
+            "date": self.date,
             "captcha_id": self._captcha_id,
             "only_digits": self._only_digits,
             "add_noise": self._add_noise,
@@ -145,7 +146,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
     def _continue_timeout(self):
         if self._timeout and CaptchaManager._handlers["on_timeout"]:
             now = datetime.now().timestamp()
-            exec_at = self.created_at + self._timeout
+            exec_at = self.date + self._timeout
             if now >= exec_at:
                 self._timeout_thread = Thread(target=CaptchaManager._handlers["on_timeout"], args=[self])
             else:
@@ -156,7 +157,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
     def _refresh(self, bot: TeleBot, only_digits=False, add_noise=True, timeout=None) -> None:
         new_code, new_image = _random_codeimage(only_digits, add_noise)
         self._timeout = timeout
-        self.created_at = datetime.now().timestamp()
+        self.date = datetime.now().timestamp()
         self.image = new_image
         self.correct_code = new_code
         self.users_code = ""
