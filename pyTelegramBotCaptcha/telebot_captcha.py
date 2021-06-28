@@ -342,7 +342,10 @@ class CaptchaManager:
             return
         
         if btn == "OK":
-            self._check_captcha(callback)
+            user_id = int(callback.data.split("=")[1])
+            captcha_id = f"{self.__class__._bot_id}={callback.message.chat.id}={user_id}"
+            if (captcha_id in self.captchas):
+                self._check_captcha(captcha_id)
         else:
             captcha._update(bot, callback)
         
@@ -350,6 +353,8 @@ class CaptchaManager:
     
     def refresh_captcha(self, bot: TeleBot, captcha: Captcha, 
             only_digits=False, add_noise=True, timeout: float=None) -> None:
+        if captcha._timeout_thread is not None:
+            captcha._timeout_thread.cancel()
         timeout = timeout or self.default_timeout
         captcha._refresh(bot, only_digits, add_noise, timeout)
         if timeout:
@@ -447,22 +452,19 @@ class CaptchaManager:
                 captcha._continue_timeout()
         return wrapper
 
-    def _check_captcha(self, callback: types.CallbackQuery):
-        user_id = int(callback.data.split("=")[1])
-        captcha_id = f"{self.__class__._bot_id}={callback.message.chat.id}={user_id}"
-        if (captcha_id in self.captchas):
-            captcha: Captcha = self.captchas[captcha_id]
-            is_correct = captcha.users_code == captcha.correct_code
-            if (captcha._timeout_thread):
-                captcha._timeout_thread.cancel()
-            captcha.previous_tries += 1
-            if is_correct:
-                if (self._handlers["on_correct"]):
-                    self._handlers["on_correct"](captcha)
-            else:
-                if (self._handlers["on_not_correct"]):
-                    self._handlers["on_not_correct"](captcha)
-            captcha._solved = True
+    def _check_captcha(self, captcha: Captcha):
+        is_correct = captcha.users_code == captcha.correct_code
+        if (captcha._timeout_thread):
+            captcha._timeout_thread.cancel()
+            captcha._timeout_thread = None
+        captcha.previous_tries += 1
+        if is_correct:
+            if (self._handlers["on_correct"]):
+                self._handlers["on_correct"](captcha)
+        else:
+            if (self._handlers["on_not_correct"]):
+                self._handlers["on_not_correct"](captcha)
+        captcha._solved = True
 
 
 def _code_input_markup(user_id: int, language: str, only_digits: bool) -> types.InlineKeyboardMarkup:
