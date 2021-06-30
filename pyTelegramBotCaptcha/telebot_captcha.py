@@ -4,7 +4,7 @@ import random
 from pathlib import Path
 from datetime import datetime
 from typing import Any, Dict, Tuple, List
-from threading import Thread, Timer
+from threading import Timer
 
 try:
     import ujson as json
@@ -148,7 +148,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             now = datetime.now().timestamp()
             exec_at = self.date + self._timeout
             if now >= exec_at:
-                self._timeout_thread = Thread(target=CaptchaManager._handlers["on_timeout"], args=[self])
+                self._timeout_thread = Timer(target=CaptchaManager._handlers["on_timeout"], args=[self], interval=1)
             else:
                 self._timeout_thread = Timer(interval=exec_at-now, 
                     function=CaptchaManager._handlers["on_timeout"], args=[self])
