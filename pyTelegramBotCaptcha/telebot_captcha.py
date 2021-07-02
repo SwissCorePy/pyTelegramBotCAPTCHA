@@ -244,7 +244,7 @@ class CaptchaManager:
                 if f.endswith(".ttf") and not f.startswith("."):
                     _fonts.append(str(_fonts_path / f))
 
-        self.captchas = {}
+        self.captchas: Dict[str, Captcha] = {}
         if os.path.exists(_captcha_saves):
             saved_captchas = os.listdir(_captcha_saves)
             for f in saved_captchas:
@@ -348,7 +348,7 @@ class CaptchaManager:
             user_id = int(callback.data.split("=")[1])
             captcha_id = f"{self.__class__._bot_id}={callback.message.chat.id}={user_id}"
             if (captcha_id in self.captchas):
-                self._check_captcha(captcha_id)
+                self._check_captcha(self.captchas[captcha_id])
         else:
             captcha._update(bot, callback)
         
