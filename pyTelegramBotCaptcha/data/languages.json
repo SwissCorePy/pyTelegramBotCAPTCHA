@@ -13,7 +13,7 @@
         "try_again": "Bitte versuch es nochmals!\nDein Code: ",
         "back": "Löschen",
         "submit": "Bestätigen",
-        "notfull": "Antwort ist nicht voll."
+        "notfull": "Der von dir eigegebene Code ist zu kurz."
     },
     "ru": {
         "text": "Добро пожаловать, #USER!\nПожалуйста, введите код, чтобы убедиться, что вы настоящий пользователь.\nВаш код: ",
