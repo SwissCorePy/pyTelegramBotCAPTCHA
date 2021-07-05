@@ -3,7 +3,7 @@ import os
 import random
 from pathlib import Path
 from datetime import datetime
-from typing import Any, Dict, Tuple, List
+from typing import Any, Dict, Tuple, List, Optional
 from threading import Timer
 
 try:
@@ -365,10 +365,16 @@ class CaptchaManager:
         bot.answer_callback_query(callback.id)
     
     def refresh_captcha(self, bot: TeleBot, captcha: Captcha, 
-            only_digits=False, add_noise=True, timeout: float=None) -> None:
+            only_digits: Optional[bool]=None, add_noise: Optional[bool]=None, timeout: Optional[float]=None) -> None:
+        
         if captcha._timeout_thread is not None:
             captcha._timeout_thread.cancel()
-        timeout = timeout or self.default_timeout
+        
+        # Default settings to previous settings if not set again
+        if only_digits is None: only_digits = captcha._only_digits
+        if add_noise is None: add_noise = captcha._add_noise
+        if timeout is None: timeout = captcha._timeout or self.default_timeout
+
         captcha._refresh(bot, only_digits, add_noise, timeout)
         if timeout:
             if not MIN_TIMEOUT < timeout < MAX_TIMEOUT:
