@@ -345,10 +345,13 @@ class CaptchaManager:
             return
         
         if btn == "OK":
-            user_id = int(callback.data.split("=")[1])
-            captcha_id = f"{self.__class__._bot_id}={callback.message.chat.id}={user_id}"
-            if (captcha_id in self.captchas):
-                self._check_captcha(self.captchas[captcha_id])
+            if len(captcha.correct_code) > len(captcha.users_code):
+                bot.answer_callback_query(callback.id,text=languages[captcha.language]["notfull"],show_alert=True)
+            else:
+                user_id = int(callback.data.split("=")[1])
+                captcha_id = f"{self.__class__._bot_id}={callback.message.chat.id}={user_id}"
+                if (captcha_id in self.captchas):
+                    self._check_captcha(self.captchas[captcha_id])
         else:
             captcha._update(bot, callback)
         
