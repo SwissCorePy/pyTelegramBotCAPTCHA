@@ -11,10 +11,9 @@ MAX_WRONG_DIGITS = 2
 # Message handler for new chat members
 @bot.message_handler(content_types=["new_chat_members"])
 def new_member(message):
-  new_user_id = message.json.get("new_chat_member").get("id")
-  new_user = bot.get_chat_member(message.chat.id, new_user_id).user
-  captcha_manager.restrict_chat_member(bot, message.chat.id, new_user.id)
-  captcha_manager.send_random_captcha(bot, message.chat, new_user, timeout=60)
+  for user in message.new_chat_members:
+    captcha_manager.restrict_chat_member(bot, message.chat.id, user.id)
+    captcha_manager.send_random_captcha(bot, message.chat, user, timeout=60)
                                                                     
 # Callback query handler
 @bot.callback_query_handler(func=lambda callback:True)
