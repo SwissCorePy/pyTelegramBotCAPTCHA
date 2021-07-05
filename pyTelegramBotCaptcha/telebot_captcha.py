@@ -23,6 +23,7 @@ _fonts = []
 
 MIN_TIMEOUT = 30
 MAX_TIMEOUT = 600
+CODE_LENGTH = 8
 
 digits = "1234567890"
 hexdigits = digits + "ABCDEF"
@@ -104,7 +105,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
         """
         How many (hex)digits do not match?
         """
-        users_code = self.users_code.ljust(8, "x")
+        users_code = self.users_code.ljust(CODE_LENGTH, "x")
         count = 0
         for i, d in enumerate(users_code):
             if self.correct_code[i] != d: count += 1
@@ -192,7 +193,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
         if (btn == "BACK"):
             self.users_code = self.users_code[:-1]
         else:
-            self.users_code = (self.users_code + btn)[:8]
+            self.users_code = (self.users_code + btn)[:CODE_LENGTH]
 
         if not self.reply_markup:
             self.reply_markup = callback.message.reply_markup
@@ -213,7 +214,7 @@ class CaptchaManager:
     _handlers = {"on_correct": None, "on_not_correct": None, "on_timeout": None}
     _bot_id = None
 
-    def __init__(self, bot_id: int, default_language: str="en", default_timeout: float=None, fonts: List=None) -> None:
+    def __init__(self, bot_id: int, default_language: str="en", default_timeout: float=None, fonts: List=None, code_length: int=8) -> None:
         """
         The Captcha Manager
 
@@ -226,7 +227,13 @@ class CaptchaManager:
         :param default_language: language to be used if not defined in `send_random_captcha`
         :param default_timeout: timeout to be useed if not defined in `send_random_captcha`
         :param fonts: fonts to be used to generate CAPTCHA images. (.ttf)
+        :param code_length: the lenght of the code. must be between 4-12 chars
         """
+        global CODE_LENGTH
+        if not (4 <= code_length <= 12):
+            raise ValueError("The Code lenghth must be between 4 and 12.")
+        CODE_LENGTH = code_length
+
         self.__class__._bot_id = bot_id
         if default_language.lower() not in languages.keys():
             raise NotImplementedError (f"The Language '{default_language}' is not implemented yet")
@@ -345,8 +352,8 @@ class CaptchaManager:
             return
         
         if btn == "OK":
-            if len(captcha.correct_code) > len(captcha.users_code):
-                bot.answer_callback_query(callback.id,text=languages[captcha.language]["notfull"],show_alert=True)
+            if len(captcha.users_code) < CODE_LENGTH:
+                bot.answer_callback_query(callback.id,text=languages[captcha.language]["notfull"], show_alert=True)
             else:
                 user_id = int(callback.data.split("=")[1])
                 captcha_id = f"{self.__class__._bot_id}={callback.message.chat.id}={user_id}"
@@ -490,9 +497,21 @@ def _quick_markup(values, row_width=4) -> types.InlineKeyboardMarkup:
     markup.add(*buttons)
     return markup
 
+def _random_code(chars):
+    length = CODE_LENGTH
+    code = ""
+    while length > 0:
+        if length >= len(chars):
+            code += "".join(random.sample(chars, len(chars)))
+            length -= len(chars)
+        else:
+            code += "".join(random.sample(chars, length))
+            length = 0
+    return code
+
 def _random_codeimage(only_digits: bool=False, add_noise: bool=True) -> Tuple:
-    image = ImageCaptcha(256, 128, _fonts, [48, 42, 54])
-    code = "".join(random.sample((digits if only_digits else hexdigits), 8))
+    image = ImageCaptcha(300, 128, _fonts, [48, 42, 54])
+    code = _random_code(digits if only_digits else hexdigits)
     image = image.generate_image(code)
 
     if add_noise:
