@@ -15,7 +15,7 @@
         "back": "Löschen",
         "submit": "Bestätigen",
         "notfull": "Der von dir eigegebene Code ist zu kurz.",
-        "maxreloadlimit": "Neustartlimit überschritten."
+        "maxreloadlimit": "Refreshlimit überschritten."
     },
     "ru": {
         "text": "Добро пожаловать, #USER!\nПожалуйста, введите код, чтобы убедиться, что вы настоящий пользователь.\nВаш код: ",
