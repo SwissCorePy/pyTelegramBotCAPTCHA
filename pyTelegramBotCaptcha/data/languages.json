@@ -5,7 +5,8 @@
         "try_again": "Please try it again!\nYour code: ",
         "back": "Delete",
         "submit": "Submit",
-        "notfull": "Answer is not full."
+        "notfull": "Answer is not full.",
+        "maxreloadlimit": "Max reload exceeded."
     },
     "de": {
         "text": "Willkommen, #USER!\nBitte gib den Code ein um zu verifizieren dass du ein echter User bist.\nDein Code: ",
@@ -13,7 +14,8 @@
         "try_again": "Bitte versuch es nochmals!\nDein Code: ",
         "back": "Löschen",
         "submit": "Bestätigen",
-        "notfull": "Der von dir eigegebene Code ist zu kurz."
+        "notfull": "Der von dir eigegebene Code ist zu kurz.",
+        "maxreloadlimit": "Refreshlimit überschritten."
     },
     "ru": {
         "text": "Добро пожаловать, #USER!\nПожалуйста, введите код, чтобы убедиться, что вы настоящий пользователь.\nВаш код: ",
@@ -21,7 +23,8 @@
         "try_again": "Пожалуйста, попробуйте еще раз!\nВаш код: ",
         "back": "Удалить",
         "submit": "Отправить",
-        "notfull": "Ответ неполный."
+        "notfull": "Ответ неполный.",
+        "maxreloadlimit": "Привышен лимит перезагрузок."
     },
     "uz": {
         "text": "Assalomu alaykum, #USER!\nIltimos, kodni kiriting..\nSizning kodingiz: ",
@@ -29,7 +32,8 @@
         "try_again": "Iltimos, qayta urining!\nSizning kodingiz: ",
         "back": "O'chirish",
         "submit": "Yuborish",
-        "notfull": "Javob to'liq emas."
+        "notfull": "Javob to'liq emas.",
+        "maxreloadlimit": "Siz captchani perezagruska qila olmaysiz."
     },
     "ar": {
         "text": "اهلا, #USER!\nالرجاء ادخال الرمز بشكل صحيح للتحقك من انك مستخدم حقيقي.\nالرمز الذي تم ادخاله: ",
@@ -37,6 +41,7 @@
         "try_again": "الرجاء المحاولة مجددا\nالرمز الذي تم ادخاله: ",
         "back": "مسح رمز",
         "submit": "تسليم",
-        "notfull": "الرمز ليس كامل."
+        "notfull": "الرمز ليس كامل.",
+        "maxreloadlimit": "تم تجاوز حد إعادة التشغيل."
     }
 }

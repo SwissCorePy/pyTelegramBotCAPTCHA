@@ -43,7 +43,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
         return cls(**obj)
 
     def __init__(self, chat: types.Chat, user: types.User, language: str, timeout: float, 
-            only_digits: bool, add_noise: bool, bot: TeleBot=None, **kwargs) -> None:
+            only_digits: bool, add_noise: bool, bot: TeleBot=None, max_reloads=3, **kwargs) -> None:
         """
         The Captcha object. Do not call this function yourself. 
         Use `captcha_manager.send_random_captcha(...)` instead
@@ -67,6 +67,8 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             
             self._only_digits = only_digits
             self._add_noise = add_noise
+            self.max_reloads = max_reloads
+            self.reloads = 0
 
             self.image = None
             self.reply_markup = None
@@ -88,6 +90,8 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             self.text = languages[self.language]["text"].replace("#USER", _user_link(self.user))
             self.correct_code, self.image = _random_codeimage(self._only_digits, self._add_noise)
             self.reply_markup = _code_input_markup(user_id=user.id, language=language, only_digits=only_digits)
+            self.max_reloads = max_reloads
+            self.reloads = 0
 
             m = self.message_id = bot.send_photo(
                 chat_id=self.chat.id, 
@@ -264,7 +268,7 @@ class CaptchaManager:
                             self.captchas[captcha._captcha_id] = captcha
 
     def send_random_captcha(self, bot: TeleBot, chat: types.Chat, user: types.User, language: str=None, 
-            only_digits: bool=False, add_noise: bool=True, timeout: float=None) -> Captcha:
+            only_digits: bool=False, add_noise: bool=True, timeout: float=None, max_reloads=3) -> Captcha:
         """
         sends a randomly generated captcha into your chat.
         :param bot: your TeleBot instance
@@ -282,7 +286,7 @@ class CaptchaManager:
 
         timeout = timeout or self.default_timeout
 
-        captcha = Captcha(chat, user, language, timeout, only_digits, add_noise, bot)
+        captcha = Captcha(chat, user, language, timeout, only_digits, add_noise, bot, max_reloads)
         if captcha._captcha_id in self.captchas.keys():
             old_captcha: Captcha = self.captchas.pop(captcha._captcha_id)
             if (old_captcha._timeout_thread):
@@ -359,13 +363,20 @@ class CaptchaManager:
                 captcha_id = f"{self.__class__._bot_id}={callback.message.chat.id}={user_id}"
                 if (captcha_id in self.captchas):
                     self._check_captcha(self.captchas[captcha_id])
+        elif btn == 'RELOAD':
+            if captcha.reloads < captcha.max_reloads:
+                self.refresh_captcha(bot,captcha,max_reloads=captcha.max_reloads)
+                captcha.reloads += 1
+            else:
+                bot.answer_callback_query(callback.id,languages[captcha.language]['maxreloadlimit'])
+                
         else:
             captcha._update(bot, callback)
         
         bot.answer_callback_query(callback.id)
     
     def refresh_captcha(self, bot: TeleBot, captcha: Captcha, 
-            only_digits: Optional[bool]=None, add_noise: Optional[bool]=None, timeout: Optional[float]=None) -> None:
+            only_digits: Optional[bool]=None, add_noise: Optional[bool]=None, timeout: Optional[float]=None, max_reloads: Optional[int]=None) -> None:
         
         if captcha._timeout_thread is not None:
             captcha._timeout_thread.cancel()
@@ -374,16 +385,18 @@ class CaptchaManager:
         if only_digits is None: only_digits = captcha._only_digits
         if add_noise is None: add_noise = captcha._add_noise
         if timeout is None: timeout = captcha._timeout or self.default_timeout
+        if max_reloads is None: max_reloads = captcha.max_reloads
 
         captcha._refresh(bot, only_digits, add_noise, timeout)
         if timeout:
-            if not MIN_TIMEOUT < timeout < MAX_TIMEOUT:
+            if not MIN_TIMEOUT <= timeout <= MAX_TIMEOUT:
                 raise ValueError(f"`timeout` must be between {MIN_TIMEOUT} and {MAX_TIMEOUT} seconds or `None`")
             captcha._timeout_thread = Timer(interval=timeout, 
                 function=self._handlers["on_timeout"], args=[captcha])
             captcha._timeout_thread.start()
             captcha._save_file()
         captcha._solved = False
+        # captcha.previous_tries += 1
 
     def delete_captcha(self, bot: TeleBot, captcha: Captcha) -> None:
         #self.captchas.pop(captcha._captcha_id)
@@ -492,7 +505,8 @@ def _code_input_markup(user_id: int, language: str, only_digits: bool) -> types.
         values[char] = {"callback_data": f"?cap={user_id}={char}"}
     return _quick_markup({**values,
         languages[language]["back"]: {"callback_data": f"?cap={user_id}=BACK"},
-        languages[language]["submit"]: {"callback_data": f"?cap={user_id}=OK"}
+        languages[language]["submit"]: {"callback_data": f"?cap={user_id}=OK"},
+        '🔄': {"callback_data": f"?cap={user_id}=RELOAD"}
     }, 5 if only_digits else 4)
   
 def _quick_markup(values, row_width=4) -> types.InlineKeyboardMarkup:
