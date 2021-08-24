@@ -364,12 +364,12 @@ class CaptchaManager:
                 if (captcha_id in self.captchas):
                     self._check_captcha(self.captchas[captcha_id])
         elif btn == 'RELOAD':
-            captcha.reloads += 1
-            if captcha.reloads >= captcha.max_reloads:
-                captcha.reloads -= 1
-                bot.answer_callback_query(callback.id,languages[captcha.language]['maxreloadlimit'])
-            else:
+            if captcha.reloads < captcha.max_reloads:
                 self.refresh_captcha(bot,captcha,max_reloads=captcha.max_reloads)
+                captcha.reloads += 1
+            else:
+                bot.answer_callback_query(callback.id,languages[captcha.language]['maxreloadlimit'])
+                
         else:
             captcha._update(bot, callback)
         
@@ -386,7 +386,6 @@ class CaptchaManager:
         if add_noise is None: add_noise = captcha._add_noise
         if timeout is None: timeout = captcha._timeout or self.default_timeout
         if max_reloads is None: max_reloads = captcha.max_reloads
-        print(timeout)
 
         captcha._refresh(bot, only_digits, add_noise, timeout)
         if timeout:
@@ -397,7 +396,7 @@ class CaptchaManager:
             captcha._timeout_thread.start()
             captcha._save_file()
         captcha._solved = False
-        captcha.previous_tries
+        # captcha.previous_tries += 1
 
     def delete_captcha(self, bot: TeleBot, captcha: Captcha) -> None:
         #self.captchas.pop(captcha._captcha_id)
