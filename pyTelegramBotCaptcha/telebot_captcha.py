@@ -235,7 +235,7 @@ class CaptchaManager:
         """
         global CODE_LENGTH
         if not (4 <= code_length <= 12):
-            raise ValueError("The Code lenghth must be between 4 and 12.")
+            raise ValueError("The Code length must be between 4 and 12.")
         CODE_LENGTH = code_length
 
         self.__class__._bot_id = bot_id
