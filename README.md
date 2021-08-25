@@ -23,8 +23,8 @@ Then this package can help you to protect your groups and members!
 It's very easy to integrate into your existing bot and also easy to customize the CAPTCHA image with your own fonts. <br />
 You can also choose between digits and hexdigits for your CAPTCHA generation. <br />
 *Note: You should have basic knowledge about the pyTelegramBotAPI* <br />
-![Example1](https://i.ibb.co/jWv61xr/Bildschirmfoto-2021-06-15-um-17-52-15.png "Example how it looks")
-![Example2](https://i.ibb.co/vZkGgw5/Bildschirmfoto-2021-06-15-um-18-18-52.png "Example how it looks")
+![Example1](https://i.ibb.co/fHxr7nh/Bildschirmfoto-2021-08-25-um-18-57-59.png "Example how it looks")
+![Example2](https://i.ibb.co/X7mkccY/Bildschirmfoto-2021-08-25-um-18-56-37.png "Example how it looks")
 
 ---
   
@@ -278,5 +278,4 @@ This class is used to create your own custom language lext for your CAPTCHA:
   * `your_code` (str) The text that is displayed in front of the users code. Example: 'Your code: '
   * `wrong_user` (str) The text that is displayed if the wrong user tries to push a button. Example: '❌ : This is not your task!'
   * `to_short` (str) The text that is displayed if the user submits but the answer code is shorter than the correct code. Example: '❌ : The code you entered is too short!'
-
-
+  
