@@ -1,14 +1,10 @@
 from telebot import TeleBot
 from pyTelegramBotCAPTCHA import CaptchaManager, CaptchaOptions, CustomLanguage
 
-token = open("/Volumes/Macintosh SSD/Users/fredi/Desktop/test_token.txt", "r").read().strip()
-bot = TeleBot(token)
+bot = TeleBot("TOKEN")
 
 options = CaptchaOptions()
-options.generator = "keyZenD"
-options.max_user_reloads = 2
-options.timeout = 120
-options.language = "uz"
+options.generator = "keyzend"
 
 captcha_manager = CaptchaManager(bot.get_me().id, default_options=options)
 

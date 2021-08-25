@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from logging import WARN
 import os
 import random
 from pathlib import Path
@@ -7,7 +6,6 @@ from datetime import datetime
 from typing import Any, Dict, Tuple, List, Optional, Union
 from threading import Timer
 import requests
-from telebot.util import user_link
 
 try:
     import ujson as json
@@ -103,8 +101,8 @@ class CustomLanguage:
     @your_code.setter
     def your_code(self, your_text: str):
         """
-        The text that is displayed if the user failed the captcha and the captcha is reloaded.
-        Example: 'Please try it again!\nYour code: '
+        The text that is displayed in front of the users code.
+        Example: 'Your code: '
         Keep in mind that the user's input will be added to the end of this text. 
         """
         if not isinstance(your_text, str): raise TypeError("Must be str")
@@ -144,7 +142,7 @@ class CaptchaOptions:
         self._timeout: float = 90
         self._code_length: int = 8
         self._max_user_reloads: int = 2
-        self._max_attempts: int = 3
+        self._max_attempts: int = 2
         self._max_incorrect_to_auto_reload: int = 1
         self._add_noise: bool = True
         self._only_digits: bool = False
@@ -187,7 +185,7 @@ class CaptchaOptions:
     @generator.setter
     def generator(self, value: str):
         """
-        The generator to use. Currently: `"default"` and `"keyzend"`
+        The generator to use. Currently available: `"default"` and `"keyzend"`
         Default: "default"
         NOTE: If not set to "default", some options will be overwritten by the generator 
         """
@@ -242,7 +240,7 @@ class CaptchaOptions:
         """
         How many attempts does the user have to solve the captcha. 
         Must be at least 1
-        Default: 3
+        Default: 2
         NOTE: this property is ignored if `auto_reload` is set to False
         """
         if value < 1:
@@ -295,6 +293,8 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
     def de_json(cls, json_str):
         if not json_str: return None
         obj = json.loads(json_str)
+        if not "options" in obj.keys():
+            pass #TODO: Expire
         if not obj["options"]:
             obj["options"] = CaptchaManager._instance.default_options
         else:
@@ -312,11 +312,6 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
         obj['chat'] = types.Chat(**obj['chat'])
         obj['user'] = types.User(**obj['user'])
         return cls(bot=None, **obj)
-
-    @staticmethod
-    def convert(obj):
-        #Todo: convert to latest version
-        return obj
 
     def __init__(self, bot: TeleBot, chat: types.Chat, user: types.User, options: CaptchaOptions, **kwargs) -> None:
         self.solved = False
@@ -336,7 +331,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             self.users_code = kwargs["users_code"]
             self.message_id = kwargs["message_id"]
             self.date = kwargs["date"]
-            self.reloads_left = kwargs["reloads_left"]
+            self.user_reloads_left = kwargs["user_reloads_left"]
         
             self.image = None
             self.reply_markup = None
@@ -346,11 +341,11 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             
             self.previous_tries = 0
             self.users_code = ""
-            self.reloads_left = self.options.max_user_reloads
+            self.user_reloads_left = self.options.max_user_reloads
 
             self.correct_code, self.image = _random_codeimage(self.options)
 
-            text = languages[self.options.language]["text"].replace("#USER", user_link(self.user)) + "\n"
+            text = languages[self.options.language]["text"].replace("#USER", _user_link(self.user)) + "\n"
             text += languages[self.options.language]["your_code"]
 
             m = self.message_id = bot.send_photo(
@@ -414,7 +409,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
             "date": self.date,
             "captcha_id": self._captcha_id,
             "previous_tries": self.previous_tries,
-            "reloads_left": self.reloads_left,
+            "user_reloads_left": self.user_reloads_left,
             "options": opt
         }
         return json.dumps(json_dict)
@@ -436,7 +431,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
         self.image = new_image
         self.correct_code = new_code
         self.users_code = ""
-        text = languages[self.options.language]["text"].replace("#USER", user_link(self.user)) + "\n"
+        text = languages[self.options.language]["text"].replace("#USER", _user_link(self.user)) + "\n"
         if self.previous_tries > 0:
             text += languages[self.options.language]["try_again"] + "\n"
         text += languages[self.options.language]["your_code"]
@@ -471,7 +466,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
         else:
             self.users_code = (self.users_code + btn)[:self.options.code_length]
 
-        text = languages[self.options.language]["text"].replace("#USER", user_link(self.user)) + "\n"
+        text = languages[self.options.language]["text"].replace("#USER", _user_link(self.user)) + "\n"
         if self.previous_tries > 0:
             text += languages[self.options.language]["try_again"] + "\n"
         text += (languages[self.options.language]["your_code"] + f"<pre>{self.users_code}</pre>")
@@ -666,8 +661,8 @@ class CaptchaManager:
                 if (captcha_id in self.captchas):
                     self._check_captcha(self.captchas[captcha_id], bot)
         elif btn == 'RELOAD':
-            if captcha.reloads_left > 0:
-                captcha.reloads_left -= 1
+            if captcha.user_reloads_left > 0:
+                captcha.user_reloads_left -= 1
                 self.refresh_captcha(bot, captcha)
             else:
                 bot.answer_callback_query(callback.id,languages[captcha.language]['maxreloadlimit'])
@@ -810,8 +805,8 @@ def _code_input_markup(captcha: Captcha) -> types.InlineKeyboardMarkup:
             values[char] = {"callback_data": f"?cap={captcha.user.id}={char}"}
         if not captcha.options.only_digits:
             row_width = 4
-    if captcha.reloads_left > 0:
-        values[f'🔄 {captcha.reloads_left}'] = {"callback_data": f"?cap={captcha.user.id}=RELOAD"}
+    if captcha.user_reloads_left > 0:
+        values[f'🔄 {captcha.user_reloads_left}'] = {"callback_data": f"?cap={captcha.user.id}=RELOAD"}
     values = {**values,
         "⬅️": {"callback_data": f"?cap={captcha.user.id}=BACK"},
         f"✅ {display_attempts_left}": {"callback_data": f"?cap={captcha.user.id}=OK"}
