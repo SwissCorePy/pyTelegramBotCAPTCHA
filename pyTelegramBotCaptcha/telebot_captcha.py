@@ -21,7 +21,7 @@ _base_path = Path(__file__).parent.absolute()
 _fonts_path = _base_path / "data" / "fonts"
 _captcha_saves = (Path(".") / ".captcha-saves").parent.absolute()
 _fonts = []
-_generators = ["keyzend"]
+_generators = ["default", "keyzend"]
 
 MIN_TIMEOUT = 30
 MAX_TIMEOUT = 600
@@ -135,7 +135,6 @@ class CaptchaOptions:
     def __init__(self) -> None:
         """
         Use this class to create a captcha options profile.
-        You can set the following properties: `language`, `timeout`, `code_length`, `allow_user_reloads`, `max_user_reloads`, `add_noise`, `only_digits`, `custom_language`
         """
         self._generator: str = None
         self._language: str = "en"
@@ -187,11 +186,13 @@ class CaptchaOptions:
         """
         The generator to use. Currently available: `"default"` and `"keyzend"`
         Default: "default"
-        NOTE: If not set to "default", some options will be overwritten by the generator 
+        NOTE: If not set to "default", some options will be ignored 
         """
-        if not value.lower() in [*_generators, "default"]:
-            raise ValueError("This generator does not exist")
-        self._generator = value.lower()
+        value = value.lower()
+        if not value in _generators:
+            self._generator = "default"
+            raise ValueError("This generator seems not to exist")
+        self._generator = value
     
     @language.setter
     def language(self, value: str):
