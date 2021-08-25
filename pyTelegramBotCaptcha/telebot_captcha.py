@@ -242,7 +242,6 @@ class CaptchaOptions:
         How many attempts does the user have to solve the captcha. 
         Must be at least 1
         Default: 2
-        NOTE: this property is ignored if `auto_reload` is set to False
         """
         if value < 1:
             raise ValueError("Must be at least 1")
@@ -255,7 +254,6 @@ class CaptchaOptions:
         if <= 0: on_not_correct event is triggered
         if 1 or higher -> if one char is incorrect the captcha is reloaded automatically (if an attempt is left)
         Default: 1
-        NOTE: this property is ignored if `auto_reload` is set to False
         """
         self._max_incorrect_to_auto_reload = value
 
