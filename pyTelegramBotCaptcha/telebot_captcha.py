@@ -47,18 +47,32 @@ class MissingHandler(Exception):
 
 
 class CustomLanguage:
-    def __init__(self, base_language: str="en") -> None:
+    def __init__(self, base_language: str="en", text: Optional[str]=None, try_again: Optional[str]=None,
+            your_code: Optional[str]=None, wrong_user: Optional[str]=None, too_short: Optional[str]=None) -> None:
         """
         Use this class to customize the texts of a captcha
         :param base_language: The base language to use
+        :param text: The main text to use for your captcha.
+            Example: 'Welcome, #USER!\nPlease enter the code to verify that you are a real user.'
+            NOTE: `#USER` is gonna be replaced by the user's first_name
+        :param try_again: The text that is displayed if the user failed the captcha and the captcha is reloaded.
+            Example: 'Please try it again!'
+        :param your_code: The text that is displayed in front of the users code.
+            Example: 'Your code: '
+            Keep in mind that the user's input will be added to the end of this text. 
+        :param wrong_user: The text that is displayed if the wrong user tries to push a button.
+            Example: '❌ : This is not your task!'
+            This text is only displayed to the user who has pressed a button
+        :param too_short: The text that is displayed if the user submits but the answer code is shorter than the correct code
+            Example: '❌ : The code you entered is too short!'
         """
         if not base_language in languages.keys():
             raise NotImplementedError
-        self._text = languages[base_language]["text"]
-        self._try_again = languages[base_language]["try_again"]
-        self._your_code = languages[base_language]["your_code"]
-        self._wrong_user = languages[base_language]["wrong_user"]
-        self._too_short = languages[base_language]["too_short"]
+        self._text = text or languages[base_language]["text"]
+        self._try_again = try_again or languages[base_language]["try_again"]
+        self._your_code = your_code or languages[base_language]["your_code"]
+        self._wrong_user = wrong_user or languages[base_language]["wrong_user"]
+        self._too_short = too_short or languages[base_language]["too_short"]
     
     def to_dict(self):
         return {
@@ -132,20 +146,43 @@ class CustomLanguage:
 
 
 class CaptchaOptions:
-    def __init__(self) -> None:
+    def __init__(self, generator: str="default", language: str="en", timeout: Union[int,float]=90, 
+            code_length: int=8, max_user_reloads: int=2, max_attempts: int=2, 
+            max_incorrect_to_auto_reload: int=2, add_noise: bool=True, only_digits: bool=False,
+            custom_language: Optional[CustomLanguage]=None) -> None:
         """
         Use this class to create a captcha options profile.
+        :param generator: The generator to use. Currently available: `"default"` and `"keyzend"`
+        :param language: The language to use
+        :param timeout: The timeout to use. (min: 30, max: 600)
+        :param code_length: The length of the code (min: 4, max: 12)
+        :param max_user_reloads: How many times can the user refresh his captcha. 0 or lower means he can not.
+        :param max_attempts: How many attempts does the user have to solve the captcha. (min: 1)
+        :param max_incorrect_to_auto_reload: How many chars can be incorrect to auto reload. 
+            if <= 0: on_not_correct event is triggered
+            if >1: if n chars are incorrect the captcha is reloaded automatically (if an attempt is left)
+        :param add_noise: Add noise to the image
+        :param only_digits: Use only digits instead of hexdigits.
+        :param custom_language: A custom language to use (overrides `language`)
+
+        NOTE: If `generator` is not set to `"default"`, some options will be ignored/overwritten 
         """
-        self._generator: str = None
-        self._language: str = "en"
-        self._timeout: float = 90
-        self._code_length: int = 8
-        self._max_user_reloads: int = 2
-        self._max_attempts: int = 2
-        self._max_incorrect_to_auto_reload: int = 1
-        self._add_noise: bool = True
-        self._only_digits: bool = False
-        self._custom_language: CustomLanguage = None
+        if not generator.lower() in _generators: raise ValueError("This generator seems not to exist")
+        if not language.lower() in languages and not custom_language: raise NotImplementedError("This language is not suported yet")
+        if not MIN_TIMEOUT <= timeout <= MAX_TIMEOUT: raise ValueError("timeout must be between 30 and 600 (in seconds)")
+        if not MIN_CODE_LENGTH <= code_length <= MAX_CODE_LENGTH: raise ValueError("code_lenght must be between 4 and 12")
+        if max_attempts < 1: raise ValueError("max_attempts must be at least 1")
+
+        self._generator: str = generator.lower()
+        self._language: str = language.lower() if not custom_language else "custom"
+        self._timeout: float = timeout
+        self._code_length: int = code_length
+        self._max_user_reloads: int = max_user_reloads
+        self._max_attempts: int = max_attempts
+        self._max_incorrect_to_auto_reload: int = max_incorrect_to_auto_reload
+        self._add_noise: bool = add_noise
+        self._only_digits: bool = only_digits
+        self._custom_language: CustomLanguage = custom_language
 
     @property
     def generator(self) -> str: return self._generator
@@ -424,7 +461,7 @@ class Captcha(types.JsonDeserializable, types.JsonSerializable):
                 function=CaptchaManager._handlers["on_timeout"], args=[self])
         self._timeout_thread.start()
 
-    def _refresh(self, bot: TeleBot) -> None:
+    def _reset(self, bot: TeleBot) -> None:
         new_code, new_image = _random_codeimage(self.options)
         self.date = datetime.now().timestamp()
         self.image = new_image
@@ -670,19 +707,32 @@ class CaptchaManager:
             captcha._update(bot, callback)
         
         bot.answer_callback_query(callback.id)
+
+    def reset_captcha(self, bot: TeleBot, captcha: Captcha) -> None:
+        """
+        Resets a Captcha
+        Generates new image, new code and resets the timeout. 
+        :param bot:
+        :param captcha:
+        """
+        if captcha._timeout_thread:
+            captcha._timeout_thread.cancel()
+            captcha._timeout_thread = None
+        captcha._reset(bot)
+        if captcha._timeout_thread is None:
+            captcha._timeout_thread = Timer(interval=captcha.options.timeout, 
+                function=self._handlers["on_timeout"], args=[captcha])
+            captcha._timeout_thread.start()
     
     def refresh_captcha(self, bot: TeleBot, captcha: Captcha, 
             only_digits: Optional[bool]=None, add_noise: Optional[bool]=None, timeout: Optional[float]=None) -> None:
-        if captcha._timeout_thread:
-            captcha._timeout_thread.cancel()
-        captcha._refresh(bot)
-        if timeout:
-            if not MIN_TIMEOUT <= timeout <= MAX_TIMEOUT:
-                raise ValueError(f"`timeout` must be between {MIN_TIMEOUT} and {MAX_TIMEOUT} seconds or `None`")
-            captcha._timeout_thread = Timer(interval=timeout, 
-                function=self._handlers["on_timeout"], args=[captcha])
-            captcha._timeout_thread.start()
-            captcha._save_file()
+        """
+        This function is deprecated and may be removed in a future release! 
+        Use `reset_captcha(...)` instead!
+
+        Note: This function still works, but the parameters `only_digits`, `add_noise` and `timeout` are ignored!
+        """
+        self.reset_captcha(bot, captcha)
 
     def delete_captcha(self, bot: TeleBot, captcha: Captcha) -> None:
         #self.captchas.pop(captcha._captcha_id)
@@ -774,7 +824,7 @@ class CaptchaManager:
         if (captcha.options.max_incorrect_to_auto_reload >= captcha.incorrect_chars 
                 and not is_correct 
                 and captcha.previous_tries < captcha.options.max_attempts):
-            captcha._refresh(bot)
+            captcha._reset(bot)
         else:
             if (captcha._timeout_thread):
                 captcha._timeout_thread.cancel()
