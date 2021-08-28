@@ -277,5 +277,5 @@ This class is used to create your own custom language lext for your CAPTCHA:
   * `try_again` (str) The text that is displayed if the user failed the captcha and the captcha is reloaded. Example: 'Please try it again!'
   * `your_code` (str) The text that is displayed in front of the users code. Example: 'Your code: '
   * `wrong_user` (str) The text that is displayed if the wrong user tries to push a button. Example: '❌ : This is not your task!'
-  * `to_short` (str) The text that is displayed if the user submits but the answer code is shorter than the correct code. Example: '❌ : The code you entered is too short!'
+  * `too_short` (str) The text that is displayed if the user submits but the answer code is shorter than the correct code. Example: '❌ : The code you entered is too short!'
   
