@@ -12,7 +12,7 @@ setup(
     author_email='swisscore.py@gmail.com',
 
     license='gpl-3.0',
-    description='An easy to use an (hopefully useful) captcha solution for pyTelegramBotAPI.',
+    description='An easy to use CAPTCHA solution for pyTelegramBotAPI.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     
