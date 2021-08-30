@@ -45,7 +45,7 @@ You can add the following optional parameters:
   * `default_language` (str) the default language to use if `captcha.options` is not set. Default is "en". Currently supported "en", "ru" , "de", "uz" and "ar"
   * `default_timeout` (float) the default timeout to use if `captcha.options` is not set. Default is `90`
   * `fonts` (list) the fonts to use instead of the builtin ones (must be a list of .ttf file paths). You can choose as many fonts as you like, but keep in mind that all the fonts are loaded into your memory, so use a lot but not to many. <br />
-  * `code_length` (int) the length of the captcha code. Must be between 4 and 12.
+  * `code_length` (int) the length of the captcha code if `captcha.options` is not set. Must be between 4 and 12.
   * `default_options` (CaptchaOptions) a option profile. (overrides all other options)
   
 ```python
