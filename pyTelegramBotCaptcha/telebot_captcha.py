@@ -121,7 +121,7 @@ class CustomLanguage:
         """
         if not isinstance(your_text, str): raise TypeError("Must be str")
         elif your_text == "": raise ValueError("This Text cannot be empty!")
-        self._try_again = your_text + (" " if not your_text.endswith(" ") else "")
+        self._your_code = your_text + (" " if not your_text.endswith(" ") else "")
     
     @wrong_user.setter
     def wrong_user(self, your_text: str):
