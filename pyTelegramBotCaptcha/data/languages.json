@@ -33,5 +33,12 @@
         "your_code": "الرمز الذي تم ادخاله: ",
         "wrong_user": "❌ : عذرا، هذا التحقق ليس لك.",
         "too_short": "❌ : الرمز ليس كامل."
-    }
+    },
+    "pt": {
+        "text": "Bem-vindo, #USER!\nPor favor coloque o código para verificar se você é um usuário de verdade.",
+        "try_again": "⚠️ : Por favor tente de novo!",
+        "your_code": "Seu código: ",
+        "wrong_user": "❌ : Isso está errado!",
+        "too_short": "❌ : O código que você digitou é muito curto!"
+    },
 }
