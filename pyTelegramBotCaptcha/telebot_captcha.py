@@ -317,11 +317,12 @@ class CaptchaOptions:
         You can setup your own language if yours is not implemented
         Default: None
         """
-        if not isinstance(value, CustomLanguage):
-            raise TypeError("must be a CustomLanguage type")
-        self._custom_language = value
-        self._language = "custom"
-        languages["custom"] = value.to_dict()
+        if value:
+            if not isinstance(value, CustomLanguage):
+                raise TypeError("must be a CustomLanguage type")
+            self._custom_language = value
+            self._language = "custom"
+            languages["custom"] = value.to_dict()
 
 
 class Captcha(types.JsonDeserializable, types.JsonSerializable):
