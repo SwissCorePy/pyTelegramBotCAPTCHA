@@ -182,7 +182,7 @@ class CaptchaOptions:
         self._max_incorrect_to_auto_reload: int = max_incorrect_to_auto_reload
         self._add_noise: bool = add_noise
         self._only_digits: bool = only_digits
-        self._custom_language: CustomLanguage = custom_language
+        self.custom_language: CustomLanguage = custom_language
 
     @property
     def generator(self) -> str: return self._generator
