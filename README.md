@@ -238,9 +238,9 @@ It has the following properties:
   * `only_digits` (bool) (Default: False) Use only digits instead of hexdigits to generate the code.
   * `custom_language` (CustomLanguage) (Default: None) Your custom language/text for the CAPTCHA. This is helpful if your language is not supported yet.
   
-*Note: Some options are ignored if `options.generator` is not set to "default. 
+*Note: Some options are ignored if `options.generator` is not set to "default". 
 
-### Ussage:
+## Usage
   
 #### Set default options:
 ```python
