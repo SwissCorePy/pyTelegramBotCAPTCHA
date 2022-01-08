@@ -25,6 +25,7 @@ You can also choose between digits and hexdigits for your CAPTCHA generation. <b
 *Note: You should have basic knowledge about the pyTelegramBotAPI* <br />
 ![Example1](https://i.ibb.co/fHxr7nh/Bildschirmfoto-2021-08-25-um-18-57-59.png "Example how it looks")
 ![Example2](https://i.ibb.co/X7mkccY/Bildschirmfoto-2021-08-25-um-18-56-37.png "Example how it looks")
+![Example2](https://i.suar.me/38PGG/s "Example how it looks")
 
 ---
   
@@ -227,7 +228,7 @@ bot.polling()
 
 This class is used to manage the options of CAPTCHA's. 
 It has the following properties:
-  * `generator` (str) (Default: "default") The generator to use. Currently available: "default" and "keyzend".
+  * `generator` (str) (Default: "default") The generator to use. Currently available: "default" and "keyzend" and "Multicolor".
   * `language` (str) (Default: "en") The language to use. Currently available: "en", "ru", "de", "uz" and "ar".
   * `timeout` (int or float) (Default: 90) The timeout in seconds until the CAPTCHA expires. Must be between 30 and 600.
   * `code_length` (int) (Default: 8) The target length of the random generated code. Must be between 4 and 12
