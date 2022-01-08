@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Any, Dict, Tuple, List, Optional, Union
 from threading import Timer
 import requests
+from multicolorcaptcha import CaptchaGenerator
 
 try:
     import ujson as json
@@ -21,7 +22,7 @@ _base_path = Path(__file__).parent.absolute()
 _fonts_path = _base_path / "data" / "fonts"
 _captcha_saves = (Path(".") / ".captcha-saves").parent.absolute()
 _fonts = []
-_generators = ["default", "keyzend"]
+_generators = ["default", "keyzend", "multicolor"]
 
 MIN_TIMEOUT = 30
 MAX_TIMEOUT = 600
@@ -31,6 +32,8 @@ MAX_CODE_LENGTH = 12
 
 digits = "1234567890"
 hexdigits = digits + "ABCDEF"
+
+multicolor_generator = CaptchaGenerator(captcha_size_num=1) # 1 = (426, 240)
 
 languages: Dict = None 
 with (_base_path / "data" / "languages.json").open("r",encoding='utf-8') as f:
@@ -152,7 +155,7 @@ class CaptchaOptions:
             custom_language: Optional[CustomLanguage]=None) -> None:
         """
         Use this class to create a captcha options profile.
-        :param generator: The generator to use. Currently available: `"default"` and `"keyzend"`
+        :param generator: The generator to use. Currently available: `"default"` and `"keyzend"` and `"multicolor"`
         :param language: The language to use
         :param timeout: The timeout to use. (min: 30, max: 600)
         :param code_length: The length of the code (min: 4, max: 12)
@@ -203,6 +206,8 @@ class CaptchaOptions:
     def code_length(self) -> int:
         if self.generator == "keyzend": 
             return 5
+        elif self.generator == "multicolor":
+            return 4
         return self._code_length
 
     @property
@@ -221,7 +226,7 @@ class CaptchaOptions:
     @generator.setter
     def generator(self, value: str):
         """
-        The generator to use. Currently available: `"default"` and `"keyzend"`
+        The generator to use. Currently available: `"default"` and `"keyzend"` and `"multicolor"`
         Default: "default"
         NOTE: If not set to "default", some options will be ignored 
         """
@@ -910,13 +915,18 @@ def _random_codeimage(options: CaptchaOptions) -> Tuple:
         else:
             raise requests.RequestException("Could not get the CAPTCHA from http://tyt.xyeta.ml/captcha.png")
     
-    else:
+    elif options.generator == "default":
         image = ImageCaptcha(300, 128, _fonts, [48, 42, 54])
         code = _random_code(digits if options.only_digits else hexdigits, options.code_length)
         image = image.generate_image(code)
 
-    if options.add_noise:
-        image = _add_noise(image)
+        if options.add_noise:
+            image = _add_noise(image)
+    
+    elif options.generator == "multicolor":
+        captcha = multicolor_generator.gen_captcha_image(difficult_level=1 if not options.add_noise else 3, multicolor=True, chars_mode="nums" if options.only_digits else "hex")
+        image = captcha["image"]
+        code = captcha["characters"]
 
     return (code, image)
 
