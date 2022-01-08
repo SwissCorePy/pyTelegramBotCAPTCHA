@@ -182,7 +182,7 @@ class CaptchaOptions:
         self._max_incorrect_to_auto_reload: int = max_incorrect_to_auto_reload
         self._add_noise: bool = add_noise
         self._only_digits: bool = only_digits
-        self._custom_language: CustomLanguage = custom_language
+        self.custom_language: CustomLanguage = custom_language
 
     @property
     def generator(self) -> str: return self._generator
@@ -317,11 +317,12 @@ class CaptchaOptions:
         You can setup your own language if yours is not implemented
         Default: None
         """
-        if not isinstance(value, CustomLanguage):
-            raise TypeError("must be a CustomLanguage type")
-        self._custom_language = value
-        self._language = "custom"
-        languages["custom"] = value.to_dict()
+        if value:
+            if not isinstance(value, CustomLanguage):
+                raise TypeError("must be a CustomLanguage type")
+            self._custom_language = value
+            self._language = "custom"
+            languages["custom"] = value.to_dict()
 
 
 class Captcha(types.JsonDeserializable, types.JsonSerializable):
