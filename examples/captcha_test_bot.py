@@ -4,7 +4,7 @@ from pyTelegramBotCAPTCHA import CaptchaManager, CaptchaOptions, CustomLanguage
 bot = TeleBot("TOKEN")
 
 options = CaptchaOptions()
-options.generator = "keyzend"  # "default", "keyzend", "multicolor"
+options.generator = "keyzend"  # "default", "keyzend", "multicolor", "math"
 
 captcha_manager = CaptchaManager(bot.get_me().id, default_options=options)
 
