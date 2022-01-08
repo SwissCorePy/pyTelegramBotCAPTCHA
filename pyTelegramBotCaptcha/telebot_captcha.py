@@ -22,7 +22,7 @@ _base_path = Path(__file__).parent.absolute()
 _fonts_path = _base_path / "data" / "fonts"
 _captcha_saves = (Path(".") / ".captcha-saves").parent.absolute()
 _fonts = []
-_generators = ["default", "keyzend", "multicolor"]
+_generators = ["default", "keyzend", "multicolor", "math"]
 
 MIN_TIMEOUT = 30
 MAX_TIMEOUT = 600
@@ -33,7 +33,7 @@ MAX_CODE_LENGTH = 12
 digits = "1234567890"
 hexdigits = digits + "ABCDEF"
 
-multicolor_generator = CaptchaGenerator(captcha_size_num=1)  # 1 = (426, 240)
+captcha_generator = CaptchaGenerator(captcha_size_num=1)  # 1 = (426, 240)
 
 languages: Dict = None
 with (_base_path / "data" / "languages.json").open("r", encoding="utf-8") as f:
@@ -193,7 +193,7 @@ class CaptchaOptions:
     ) -> None:
         """
         Use this class to create a captcha options profile.
-        :param generator: The generator to use. Currently available: `"default"` and `"keyzend"` and `"multicolor"`
+        :param generator: The generator to use. Currently available: `"default"` and `"keyzend"` and `"multicolor"` and `"math"`
         :param language: The language to use
         :param timeout: The timeout to use. (min: 30, max: 600)
         :param code_length: The length of the code (min: 4, max: 12)
@@ -281,7 +281,7 @@ class CaptchaOptions:
     @generator.setter
     def generator(self, value: str):
         """
-        The generator to use. Currently available: `"default"` and `"keyzend"` and `"multicolor"`
+        The generator to use. Currently available: `"default"` and `"keyzend"` and `"multicolor"` and `"math"`
         Default: "default"
         NOTE: If not set to "default", some options will be ignored
         """
@@ -323,9 +323,11 @@ class CaptchaOptions:
         """
         if not isinstance(value, int):
             raise TypeError("Must be int")
-        elif not MIN_CODE_LENGTH <= value <= MAX_CODE_LENGTH:
-            self._code_length = value
+        elif (
+            not MIN_CODE_LENGTH <= value <= MAX_CODE_LENGTH and self.generator != "math"
+        ):
             raise ValueError("Must be between 4 and 12")
+        self._code_length = value
 
     @max_user_reloads.setter
     def max_user_reloads(self, value: int):
@@ -1091,14 +1093,19 @@ def _random_codeimage(options: CaptchaOptions) -> Tuple:
             image = _add_noise(image)
 
     elif options.generator == "multicolor":
-        captcha = multicolor_generator.gen_captcha_image(
-            difficult_level=1 if not options.add_noise else 3,
+        captcha = captcha_generator.gen_captcha_image(
+            difficult_level=0 if not options.add_noise else 2,
             multicolor=True,
             chars_mode="nums" if options.only_digits else "hex",
         )
         image = captcha["image"]
         code = captcha["characters"]
 
+    elif options.generator == "math":
+        captcha = captcha_generator.gen_math_captcha_image()
+        image = captcha["image"]
+        code = captcha["equation_result"]
+        options.code_length = len(code)
     return (code, image)
 
 
