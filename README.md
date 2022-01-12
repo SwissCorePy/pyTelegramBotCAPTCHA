@@ -24,10 +24,10 @@ Then this package can help you to protect your groups and members!
 It's very easy to integrate into your existing bot and also easy to customize the CAPTCHA image with your own fonts. <br />
 You can also choose between digits and hexdigits for your CAPTCHA generation. <br />
 *Note: You should have basic knowledge about the pyTelegramBotAPI* <br />
-![Example1](https://i.ibb.co/fHxr7nh/Bildschirmfoto-2021-08-25-um-18-57-59.png "Example how it looks")
-![Example2](https://i.ibb.co/X7mkccY/Bildschirmfoto-2021-08-25-um-18-56-37.png "Example how it looks")
-![Example2](https://i.suar.me/P2PVd/s "Example how it looks")
-![Example2](https://i.suar.me/vXY00/s "Example how it looks")
+![Example1 'default generator'](https://i.ibb.co/fHxr7nh/Bildschirmfoto-2021-08-25-um-18-57-59.png "Example how it looks")
+![Example2 'keyzend generator'](https://i.ibb.co/X7mkccY/Bildschirmfoto-2021-08-25-um-18-56-37.png "Example how it looks")
+![Example3 'multicolor generator'](https://i.suar.me/P2PVd/s "Example how it looks")
+![Example4 'math generator'](https://i.suar.me/vXY00/s "Example how it looks")
 
 ---
   
@@ -230,7 +230,7 @@ bot.polling()
 
 This class is used to manage the options of CAPTCHA's. 
 It has the following properties:
-  * `generator` (str) (Default: "default") The generator to use. Currently available: "default" and "keyzend" and "Multicolor" and "math".
+  * `generator` (str) (Default: "default") The generator to use. Currently available: "default" and "keyzend" and "multicolor" and "math".
   * `language` (str) (Default: "en") The language to use. Currently available: "en", "ru", "de", "uz" and "ar".
   * `timeout` (int or float) (Default: 90) The timeout in seconds until the CAPTCHA expires. Must be between 30 and 600.
   * `code_length` (int) (Default: 8) The target length of the random generated code. Must be between 4 and 12
