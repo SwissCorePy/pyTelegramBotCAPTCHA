@@ -4,6 +4,7 @@ import random
 from pathlib import Path
 from datetime import datetime
 from typing import Any, Dict, Tuple, List, Optional, Union
+from enum import Enum
 from threading import Timer
 import requests
 from multicolorcaptcha import CaptchaGenerator
@@ -22,7 +23,6 @@ _base_path = Path(__file__).parent.absolute()
 _fonts_path = _base_path / "data" / "fonts"
 _captcha_saves = (Path(".") / ".captcha-saves").parent.absolute()
 _fonts = []
-_generators = ["default", "keyzend", "multicolor", "math"]
 
 MIN_TIMEOUT = 30
 MAX_TIMEOUT = 600
@@ -38,6 +38,13 @@ captcha_generator = CaptchaGenerator(captcha_size_num=1)  # 1 = (426, 240)
 languages: Dict = None
 with (_base_path / "data" / "languages.json").open("r", encoding="utf-8") as f:
     languages = json.loads(f.read())
+
+
+class Generator(Enum):
+    default = "default"
+    keyzend = "keyzend"
+    multicolor = "multicolor"
+    math = "math"
 
 
 class MissingHandler(Exception):
@@ -208,8 +215,6 @@ class CaptchaOptions:
 
         NOTE: If `generator` is not set to `"default"`, some options will be ignored/overwritten
         """
-        if not generator.lower() in _generators:
-            raise ValueError("This generator seems not to exist")
         if not language.lower() in languages and not custom_language:
             raise NotImplementedError("This language is not suported yet")
         if not MIN_TIMEOUT <= timeout <= MAX_TIMEOUT:
@@ -219,7 +224,8 @@ class CaptchaOptions:
         if max_attempts < 1:
             raise ValueError("max_attempts must be at least 1")
 
-        self._generator: str = generator.lower()
+        # no need to validate generator because EnumMeta will raise "ValueError: unknown is not a valid Generator"
+        self._generator: str = Generator(generator.lower()).name
         self._language: str = language.lower() if not custom_language else "custom"
         self._timeout: float = timeout
         self._code_length: int = code_length
@@ -285,11 +291,7 @@ class CaptchaOptions:
         Default: "default"
         NOTE: If not set to "default", some options will be ignored
         """
-        value = value.lower()
-        if not value in _generators:
-            self._generator = "default"
-            raise ValueError("This generator seems not to exist")
-        self._generator = value
+        self._generator = Generator(value.lower()).name
 
     @language.setter
     def language(self, value: str):
