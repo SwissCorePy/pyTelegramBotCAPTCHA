@@ -1075,13 +1075,13 @@ def extend_code(
 def _random_codeimage(options: CaptchaOptions) -> Tuple:
     image, code = None, None
     if options.generator == "keyzend":
-        r = requests.get("http://tyt.keyzend.pw/captcha.png")
+        r = requests.get("https://tyt.keyzend.pw/captcha.png")
         if r.status_code == 200:
             code = r.headers["answer"].upper()
             image = r.content
         else:
             raise requests.RequestException(
-                "Could not get the CAPTCHA from http://tyt.keyzend.pw/captcha.png"
+                "Could not get the CAPTCHA from https://tyt.keyzend.pw/captcha.png"
             )
 
     elif options.generator == "default":
