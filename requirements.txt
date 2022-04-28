@@ -1,4 +1,4 @@
-captcha==0.3
+captcha==0.4
 certifi==2021.10.8
 charset-normalizer==2.0.10
 idna==3.3
